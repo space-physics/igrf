@@ -8,11 +8,20 @@ bostonmicrowave.com
 
 """
 from __future__ import division
-from numpy import  arange, empty, empty_like, meshgrid, atleast_1d,nditer
-from matplotlib.pyplot import figure,show
+from numpy import  empty, empty_like, atleast_1d,nditer
+from matplotlib.pyplot import figure,show,subplots
+from matplotlib.ticker import ScalarFormatter
+import sys
+sys.path.append('../msise-00')
+from demo_msis import latlonworldgrid
 #
 import igrf12
 import igrf11
+
+sfmt = ScalarFormatter(useMathText=True) #for 10^3 instead of 1e3
+sfmt.set_powerlimits((-2, 2))
+sfmt.set_scientific(True)
+sfmt.set_useOffset(False)
 
 def testigrf12(isv,year,itype,alt,colat,elon):
 
@@ -32,38 +41,39 @@ def testigrf11(isv,year,itype,alt,colat,elon):
 
 
 def plotigrf(x,y,z,f,glat,glon,year,isv,mdl):
-    for i,j in zip((x,y,z),('x','y','z')):
-        fg = figure()
-        ax = fg.gca()
-        hi = ax.imshow(i,extent=(glon[0,0],glon[-1,0],glat[0,0],glat[0,-1]))
-        fg.colorbar(hi)
-        ax.set_xlabel('latitude (deg)')
-        ax.set_ylabel('longitude (deg)')
-        ax.set_title('IGRF{:s} $B_{:s}$-field on {:.2f}'.format(mdl,j,year))
+    fg,ax = subplots(2,2,sharex=True)
+    ax = ax.ravel()
+    for a,i,j in zip(ax,(x,y,z),('x','y','z')):
+        hi = a.imshow(i,extent=(glon[0,0],glon[0,-1],glat[0,0],glat[-1,0]),
+                      cmap='bwr',
+                      vmin=-6e4,vmax=6e4) #symmetrix vmin,vmax centers white at zero for bwr cmap
+        fg.colorbar(hi,ax=a,format=sfmt)
+        a.set_title('IGRF{:s} $B_{:s}$-field on {:.2f}'.format(mdl,j,year))
+    for a in ax[[0,2]]:
+        a.set_ylabel('latitude (deg)')
+    for a in ax[[2,3]]:
+        a.set_xlabel('longitude (deg)')
+
 
     if isv==0:
-        fg = figure()
-        ax = fg.gca()
-        hi = ax.imshow(f,extent=(glon[0,0],glon[-1,0],glat[0,0],glat[0,-1]))
-        fg.colorbar(hi)
-        ax.set_xlabel('latitude (deg)')
-        ax.set_ylabel('longitude (deg)')
-        ax.set_title('IGRF{:s} $B$-field: total intensity [nT] on {:.2f}'.format(mdl,year))
+        hi = a.imshow(f,extent=(glon[0,0],glon[0,-1],glat[0,0],glat[-1,0]))
+        fg.colorbar(hi,ax=a,format=sfmt)
+        a.set_title('IGRF{:s} $B$-field: total intensity [nT] on {:.2f}'.format(mdl,year))
 
 def plotdiff1112(x,x11,y,y11,z,z11,f,f11,glat,glon,year,isv):
     for i,j,k in zip((x,y,z),(x11,y11,z11),('x','y','z')):
         fg = figure()
         ax = fg.gca()
-        hi = ax.imshow(i-j,extent=(glon[0,0],glon[-1,0],glat[0,0],glat[0,-1]))
-        fg.colorbar(hi)
-        ax.set_xlabel('latitude (deg)')
-        ax.set_ylabel('longitude (deg)')
+        hi = ax.imshow(i-j,extent=(glon[0,0],glon[0,-1],glat[0,0],glat[-1,0]))
+        fg.colorbar(hi,format=sfmt)
+        ax.set_ylabel('latitude (deg)')
+        ax.set_xlabel('longitude (deg)')
         ax.set_title('IGRF12-IGRF11 $B_{:s}$-field comparison on {:.2f}'.format(k,year))
 
     if isv==0:
         fg = figure()
         ax = fg.gca()
-        hi = ax.imshow(f-f11,extent=(glon[0,0],glon[-1,0],glat[0,0],glat[0,-1]))
+        hi = ax.imshow(f-f11,extent=(glon[0,0],glon[0,-1],glat[0,0],glat[-1,0]))
         fg.colorbar(hi)
         ax.set_xlabel('latitude (deg)')
         ax.set_ylabel('longitude (deg)')
@@ -82,9 +92,7 @@ if __name__ == '__main__':
 
     # do world-wide grid if no user input
     if p.altkm is None or p.latlon[0] is None:
-        lat = arange(-90,90+5,5)
-        lon = arange(-180,180+10,10)
-        glat,glon = meshgrid(lat,lon)
+        glat,glon = latlonworldgrid()
     elif p.altkm is not None and p.latlon[0] is not None:
         glat,glon = p.latlon
     else:
@@ -101,7 +109,7 @@ if __name__ == '__main__':
         plotigrf(x,y,z,f,glat,glon,p.year,p.isv,'12')
         #plotigrf(x,y,z,f,glat,glon,p.year,p.isv,'11')
 
-        plotdiff1112(x,x11,y,y11,z,z11,f,f11,glat,glon,p.year,p.isv)
+        #plotdiff1112(x,x11,y,y11,z,z11,f,f11,glat,glon,p.year,p.isv)
     else:
         print('x y z f')
         print(x,y,z,f)
