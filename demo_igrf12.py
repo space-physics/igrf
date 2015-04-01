@@ -12,33 +12,48 @@ from numpy import  empty, empty_like, atleast_1d,nditer
 from matplotlib.pyplot import figure,show,subplots
 from matplotlib.ticker import ScalarFormatter
 import sys
-sys.path.append('../msise-00')
+sys.path.append('../msise-00') #git clone https://github.com/scienceopen/msise-00.git
 from demo_msis import latlonworldgrid
+from fortrandates import datetime2yeardec
 #
-import igrf12
-import igrf11
+try:
+    import igrf12
+    import igrf11
+except ImportError as e:
+    exit('you must compile using f2py. Please see README.md. ' + str(e))
 
 sfmt = ScalarFormatter(useMathText=True) #for 10^3 instead of 1e3
 sfmt.set_powerlimits((-2, 2))
 sfmt.set_scientific(True)
 sfmt.set_useOffset(False)
 
-def testigrf12(isv,year,itype,alt,colat,elon):
+def testigrf12(dtime,isv,itype,alt,colat,elon):
+
+    yeardec = datetime2yeardec(dtime)
+    colat,elon = latlon2colat(glat,glon)
 
     x = empty(colat.size);  y = empty_like(x); z = empty_like(x); f=empty_like(x)
     for i,(clt,eln) in enumerate(nditer((colat,elon))):
-        x[i],y[i],z[i],f[i] = igrf12.igrf12syn(isv, year, itype, alt, clt, eln)
+        x[i],y[i],z[i],f[i] = igrf12.igrf12syn(isv, yeardec, itype, alt, clt, eln)
 
-    return x.reshape(colat.shape), y.reshape(colat.shape), z.reshape(colat.shape),f.reshape(colat.shape)
+    return x.reshape(colat.shape), y.reshape(colat.shape), z.reshape(colat.shape),f.reshape(colat.shape), yeardec
 
-def testigrf11(isv,year,itype,alt,colat,elon):
+def testigrf11(dtime,isv,itype,alt,glat,glon):
+
+    yeardec = datetime2yeardec(dtime)
+    colat,elon = latlon2colat(glat,glon)
 
     x = empty(colat.size);  y = empty_like(x); z = empty_like(x); f=empty_like(x)
     for i,(clt,eln) in enumerate(nditer((colat,elon))):
-        x[i],y[i],z[i],f[i] = igrf11.igrf11syn(isv, year, itype, alt, clt, eln)
+        x[i],y[i],z[i],f[i] = igrf11.igrf11syn(isv, yeardec, itype, alt, clt, eln)
 
     return x.reshape(colat.shape), y.reshape(colat.shape), z.reshape(colat.shape),f.reshape(colat.shape)
 
+def latlon2colat(glat,glon):
+    #atleast_1d for iteration later
+    colat = 90-atleast_1d(glat)
+    elon = (360 + atleast_1d(glon)) % 360
+    return colat,elon
 
 def plotigrf(x,y,z,f,glat,glon,year,isv,mdl):
     fg,ax = subplots(2,2,sharex=True)
@@ -48,7 +63,7 @@ def plotigrf(x,y,z,f,glat,glon,year,isv,mdl):
                       cmap='bwr',
                       vmin=-6e4,vmax=6e4) #symmetrix vmin,vmax centers white at zero for bwr cmap
         fg.colorbar(hi,ax=a,format=sfmt)
-        a.set_title('IGRF{:s} $B_{:s}$-field on {:.2f}'.format(mdl,j,year))
+        a.set_title('IGRF{:s} $B_{:s}$-field on {:.3f}'.format(mdl,j,year))
     for a in ax[[0,2]]:
         a.set_ylabel('latitude (deg)')
     for a in ax[[2,3]]:
@@ -83,10 +98,10 @@ def plotdiff1112(x,x11,y,y11,z,z11,f,f11,glat,glon,year,isv):
 if __name__ == '__main__':
     from argparse import ArgumentParser
     p = ArgumentParser(description='calls HWM93 from Python, a basic demo')
-    p.add_argument('year',help='year.y Common Era year+fractional part of year',type=float,nargs='?',default=2015.4)
+    p.add_argument('simtime',help='yyyy-mm-ddTHH:MM:SSZ time of sim',type=str,nargs='?',default='')
     p.add_argument('--isv',help='0: main field. 1: secular variation',type=int,default=0)
     p.add_argument('--itype',help='1: geodetic. 2: geocentric',type=int,default=1)
-    p.add_argument('altkm',help='(km) above sea level if itype=1, (km) from center of Earth if itype=2',type=float,nargs='?',default=0)
+    p.add_argument('-a','--altkm',help='(km) above sea level if itype=1, (km) from center of Earth if itype=2',type=float,nargs='+',default=[0])
     p.add_argument('-c','--latlon',help='geodetic latitude, longitude (deg)',type=float,nargs=2,default=(None,None))
     p = p.parse_args()
 
@@ -98,15 +113,11 @@ if __name__ == '__main__':
     else:
         exit('please input all 3 of lat,lon,alt or none of them')
 
-    #atleast_1d for iteration later
-    colat = 90-atleast_1d(glat)
-    elon = (360 + atleast_1d(glon)) % 360
+    x,y,z,f, yeardec = testigrf12(p.simtime,p.isv, p.itype, p.altkm, glat,glon)
+    x11,y11,z11,f11 = testigrf11(p.simtime,p.isv,p.itype, p.altkm, glat,glon)
 
-    x,y,z,f = testigrf12(p.isv, p.year, p.itype, p.altkm, colat,elon)
-    x11,y11,z11,f11 = testigrf11(p.isv, p.year, p.itype, p.altkm, colat,elon)
-
-    if colat.ndim==2:
-        plotigrf(x,y,z,f,glat,glon,p.year,p.isv,'12')
+    if glat.ndim==2:
+        plotigrf(x,y,z,f,glat,glon,yeardec,p.isv,'12')
         #plotigrf(x,y,z,f,glat,glon,p.year,p.isv,'11')
 
         #plotdiff1112(x,x11,y,y11,z,z11,f,f11,glat,glon,p.year,p.isv)
