@@ -1,0 +1,3 @@
+[submodule "msise00"]
+	path = msise00
+	url = https://github.com/scienceopen/msise00

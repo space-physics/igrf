@@ -11,10 +11,8 @@ from __future__ import division
 from numpy import  empty, empty_like, atleast_1d,nditer
 from matplotlib.pyplot import figure,show,subplots
 from matplotlib.ticker import ScalarFormatter
-import sys
-sys.path.append('../msise-00') #git clone https://github.com/scienceopen/msise-00.git
-from demo_msis import latlonworldgrid
-from fortrandates import datetime2yeardec
+from msise00.demo_msis import latlonworldgrid
+from msise00.fortrandates import datetime2yeardec
 #
 try:
     import igrf12
