@@ -1,12 +1,12 @@
-# python-igrf12
+igrf12py
 International Geomagnetic Reference Field IGRF12 and IGRF11...in Python!
 
 All credit to original authors, I slightly modified the Fortran 77 
 code so it could compile in a modern compiler. 
 
 ```
-f2py3 -m igrf12 -c igrf12.f 
-f2py3 -m igrf11 -c igrf11.f 
+f2py -m igrf12 -c igrf12.f 
+f2py -m igrf11 -c igrf11.f 
 ```
 plot by:
 ```
