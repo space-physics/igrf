@@ -7,18 +7,19 @@ Michael Hirsch
 bostonmicrowave.com
 
 """
-from __future__ import division
+from __future__ import division,absolute_import
 from numpy import  empty, empty_like, atleast_1d,nditer
 from matplotlib.pyplot import figure,show,subplots
 from matplotlib.ticker import ScalarFormatter
-from msise00.demo_msis import latlonworldgrid
-from msise00.fortrandates import datetime2yeardec
+#
+from gridaurora.worldgrid import latlonworldgrid
+from gridaurora.fortrandates import datetime2yeardec
 #
 try:
     import igrf12
     import igrf11
 except ImportError as e:
-    exit('you must compile using f2py. Please see README.md. ' + str(e))
+    exit('you must compile igrf12 using f2py. Please see README.md. {}'.format(e))
 
 sfmt = ScalarFormatter(useMathText=True) #for 10^3 instead of 1e3
 sfmt.set_powerlimits((-2, 2))

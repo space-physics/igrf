@@ -1,3 +1,3 @@
-[submodule "msise00"]
-	path = msise00
-	url = https://github.com/scienceopen/msise00
+[submodule "gridaurora"]
+	path = gridaurora
+	url = https://github.com/scienceopen/gridaurora
