@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import setuptools
 from numpy.distutils.core import setup,Extension
 
 with open('README.rst') as f:
@@ -12,10 +13,12 @@ setup(name='igrf12py',
 	  author='Michael Hirsch',
 	  author_email='hirsch617@gmail.com',
 	  url='https://github.com/scienceopen/igrf12py',
-	  install_requires=['gridauora',
-                     'numpy','six','pytz','dateutil'],
-    dependency_links = ['https://github.com/scienceopen/gridaurora/tarball/master#egg=gridaurora'],
-    packages=['igrf12py'],
-    ext_modules=[Extension(name='igrf12',sources=['fortrancode/igrf12.f'],
-                    f2py_options=['quiet'])]
+	  install_requires=['gridaurora','histutils',
+                     'numpy','six','pytz','python-dateutil'],
+      dependency_links = ['https://github.com/scienceopen/gridaurora/tarball/master#egg=gridaurora',
+                          'https://github.com/scienceopen/histutils/tarball/master#egg=histutils'],
+      packages=['igrf12py'],
+      ext_modules=[Extension(name='igrf12',
+                           sources=['fortrancode/igrf12.f'],
+                           f2py_options=['quiet'])]
 	  )

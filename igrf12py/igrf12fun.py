@@ -11,7 +11,7 @@ from numpy import  empty, empty_like, atleast_1d,nditer
 from matplotlib.pyplot import figure,subplots
 from matplotlib.ticker import ScalarFormatter
 #
-from gridaurora.fortrandates import datetime2yeardec
+from histutils.fortrandates import datetime2yeardec
 #
 import igrf12
 #import igrf11
