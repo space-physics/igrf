@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-import setuptools
+import setuptools #by importing this first, you get the ability to use ext_modules and install_requires, best of both worlds
 from numpy.distutils.core import setup,Extension
 
-with open('README.rst') as f:
+with open('README.rst','r') as f:
 	long_description = f.read()
 
 #%% install
