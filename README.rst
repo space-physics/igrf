@@ -7,17 +7,20 @@ igrf12py
 ========
 International Geomagnetic Reference Field IGRF12 and IGRF11...in Python!
 
+:Author Python API: Michael Hirsch
+
+
 Installation
 ------------
 from Terminal::
 
     git clone --depth 1 https://github.com/scienceopen/igrf12py
     conda install --file requirements.txt
-    python setup.py install
+    python setup.py develop
 
 Run Example
 -----------
-from Terminal::
+.. code:: bash
 
     python demo_igrf12.py
 

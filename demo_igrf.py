@@ -5,7 +5,7 @@ from igrf12py.igrf12fun import runigrf12,plotigrf
 
 if __name__ == '__main__':
     from argparse import ArgumentParser
-    p = ArgumentParser(description='calls HWM93 from Python, a basic demo')
+    p = ArgumentParser(description='calls IGRF from Python, a basic demo')
     p.add_argument('simtime',help='yyyy-mm-ddTHH:MM:SSZ time of sim',nargs='?',default='')
     p.add_argument('--isv',help='0: main field. 1: secular variation',type=int,default=0)
     p.add_argument('--itype',help='1: geodetic. 2: geocentric',type=int,default=1)
