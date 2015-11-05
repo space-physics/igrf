@@ -12,12 +12,11 @@ setup(name='igrf12py',
 	  long_description=long_description,
 	  author='Michael Hirsch',
 	  url='https://github.com/scienceopen/igrf12py',
-	  install_requires=['gridaurora','histutils',
-                     'numpy','six','pytz','python-dateutil'],
+	  install_requires=['gridaurora','histutils'],
       dependency_links = ['https://github.com/scienceopen/gridaurora/tarball/master#egg=gridaurora',
                           'https://github.com/scienceopen/histutils/tarball/master#egg=histutils'],
       packages=['igrf12py'],
       ext_modules=[Extension(name='igrf12',
                            sources=['fortrancode/igrf12.f'],
-                           f2py_options=['quiet'])]
+                           f2py_options=['--quiet'])]
 	  )
