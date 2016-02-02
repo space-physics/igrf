@@ -6,7 +6,6 @@ Quick demo of calling IGRF12 and IGRF11 using f2py3 from Python
 Michael Hirsch
 
 """
-from __future__ import division,absolute_import
 from numpy import  empty, empty_like, atleast_1d,nditer
 from matplotlib.pyplot import figure,subplots
 from matplotlib.ticker import ScalarFormatter
