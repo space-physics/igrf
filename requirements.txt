@@ -1,5 +1,5 @@
 numpy
-matplotlib>=1.4
+matplotlib
 six
 dateutil
 pytz
