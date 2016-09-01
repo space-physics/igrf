@@ -1,7 +1,3 @@
-.. image:: https://codeclimate.com/github/scienceopen/igrf12py/badges/gpa.svg
-   :target: https://codeclimate.com/github/scienceopen/igrf12py
-   :alt: Code Climate
-
 ========
 igrf12py
 ========
