@@ -1,5 +1,4 @@
 numpy
 matplotlib
-six
-dateutil
+python-dateutil
 pytz

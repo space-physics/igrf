@@ -1,12 +1,14 @@
+#!/usr/bin/env python
 from matplotlib.pyplot import show
 #
 from gridaurora.worldgrid import latlonworldgrid
-from igrf12py.igrf12fun import runigrf12,plotigrf
+from igrf12py import runigrf12
+from igrf12py.plots import plotigrf
 
 if __name__ == '__main__':
     from argparse import ArgumentParser
     p = ArgumentParser(description='calls IGRF from Python, a basic demo')
-    p.add_argument('simtime',help='yyyy-mm-ddTHH:MM:SSZ time of sim',nargs='?',default='')
+    p.add_argument('simtime',help='yyyy-mm-ddTHH:MM:SSZ time of sim')
     p.add_argument('--isv',help='0: main field. 1: secular variation',type=int,default=0)
     p.add_argument('--itype',help='1: geodetic. 2: geocentric',type=int,default=1)
     p.add_argument('-a','--altkm',help='(km) above sea level if itype=1, (km) from center of Earth if itype=2',type=float,nargs='+',default=[0])

@@ -1,17 +1,16 @@
-#!/usr/bin/env python3
-import setuptools #by importing this first, you get the ability to use ext_modules and install_requires, best of both worlds
-from numpy.distutils.core import setup,Extension
+#!/usr/bin/env python
+import setuptools
+try:
+    import conda.cli
+    conda.cli.main('install','--file','requirements.txt')
+except Exception as e:
+    print(e)
 
-with open('README.rst','r') as f:
-	long_description = f.read()
+
+from numpy.distutils.core import setup,Extension
 
 #%% install
 setup(name='igrf12py',
-      version='0.1',
-	  description='Python wrapper for IGRF12 geomagnetic model',
-	  long_description=long_description,
-	  author='Michael Hirsch',
-	  url='https://github.com/scienceopen/igrf12py',
 	  install_requires=['gridaurora','histutils'],
       dependency_links = ['https://github.com/scienceopen/gridaurora/tarball/master#egg=gridaurora',
                           'https://github.com/scienceopen/histutils/tarball/master#egg=histutils'],
