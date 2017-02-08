@@ -1,4 +1,6 @@
-numpy
-matplotlib
+nose
 python-dateutil
 pytz
+numpy
+matplotlib
+seaborn

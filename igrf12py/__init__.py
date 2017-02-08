@@ -6,7 +6,7 @@ Michael Hirsch
 """
 from numpy import  empty, empty_like, atleast_1d,nditer
 #
-from histutils.fortrandates import datetime2yeardec
+from sciencedates import datetime2yeardec
 #
 import igrf12
 #import igrf11
