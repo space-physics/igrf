@@ -1,17 +1,15 @@
 """
-NOTE: The performance of this demo has not been checked at all.
-Please do basic sanity checks of output.
 Quick demo of calling IGRF12 and IGRF11 using f2py3 from Python
-Michael Hirsch
+Michael Hirsch, Ph.D.
 """
 from numpy import  empty, empty_like, atleast_1d,nditer
 #
 from sciencedates import datetime2yeardec
 #
 import igrf12
-#import igrf11
 
-def runigrf12(dtime,isv,itype,alt,glat,glon):
+
+def gridigrf12(dtime,isv,itype,alt,glat,glon):
 
     yeardec = datetime2yeardec(dtime)
     colat,elon = latlon2colat(glat,glon)
@@ -22,7 +20,22 @@ def runigrf12(dtime,isv,itype,alt,glat,glon):
 
     return x.reshape(colat.shape), y.reshape(colat.shape), z.reshape(colat.shape),f.reshape(colat.shape), yeardec
 
+def runigrf12(dtime,isv,itype,alt,glat,glon):
+
+    yeardec = datetime2yeardec(dtime)
+    colat,elon = latlon2colat(glat,glon)
+
+    assert colat.size==elon.size==1
+
+    alt = atleast_1d(alt)
+    x = empty(alt.size);  y = empty_like(x); z = empty_like(x); f=empty_like(x)
+    for i,a in enumerate(alt):
+        x[i],y[i],z[i],f[i] = igrf12.igrf12syn(isv, yeardec, itype, a, colat, elon)
+
+    return x,y,z,f
+
 def runigrf11(dtime,isv,itype,alt,glat,glon):
+    import igrf11
 
     yeardec = datetime2yeardec(dtime)
     colat,elon = latlon2colat(glat,glon)

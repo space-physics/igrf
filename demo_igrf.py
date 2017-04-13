@@ -2,7 +2,7 @@
 from matplotlib.pyplot import show
 #
 from gridaurora.worldgrid import latlonworldgrid
-from igrf12py import runigrf12
+from igrf12py import gridigrf12
 from igrf12py.plots import plotigrf
 
 if __name__ == '__main__':
@@ -22,9 +22,9 @@ if __name__ == '__main__':
     elif p.altkm and p.latlon:
         glat,glon = p.latlon
     else:
-        exit('please input all 3 of lat,lon,alt or none of them')
+        raise ValueError('please input all 3 of lat,lon,alt or none of them')
 
-    x,y,z,f, yeardec = runigrf12(p.simtime,p.isv, p.itype, p.altkm, glat,glon)
+    x,y,z,f, yeardec = gridigrf12(p.simtime,p.isv, p.itype, p.altkm, glat,glon)
 #    x11,y11,z11,f11 = testigrf11(p.simtime,p.isv,p.itype, p.altkm, glat,glon)
 
     if glat.ndim==2:

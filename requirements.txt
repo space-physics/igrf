@@ -1,6 +1,0 @@
-nose
-python-dateutil
-pytz
-numpy
-matplotlib
-seaborn

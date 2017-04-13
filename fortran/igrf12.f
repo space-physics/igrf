@@ -39,6 +39,7 @@ c     to even) included as these are the coefficients published in Excel
 c     spreadsheet July 2005.
 c
       implicit double precision (a-h,o-z)
+      intent(in)  :: isv,date,itype,alt,colat,elong
       intent(out) :: x,y,z,f
       dimension gh(3451),g0(120),g1(120),g2(120),g3(120),g4(120),
      1          g5(120),g6(120),g7(120),g8(120),g9(120),ga(120),
@@ -646,6 +647,6 @@ c
   961 format (/' This subroutine will not work with a date of',
      1        f9.3,'.  Date must be in the range 1900.0.ge.date',
      2        '.le.2025.0. On return f = 1.0d8., x = y = z = 0.')
-      return
-      end
+
+      end subroutine igrf12syn
 
