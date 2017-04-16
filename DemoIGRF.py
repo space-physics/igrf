@@ -2,8 +2,8 @@
 from matplotlib.pyplot import show
 #
 from gridaurora.worldgrid import latlonworldgrid
-from igrf12py import gridigrf12
-from igrf12py.plots import plotigrf
+from pyigrf12 import gridigrf12
+from pyigrf12.plots import plotigrf
 
 if __name__ == '__main__':
     from argparse import ArgumentParser
