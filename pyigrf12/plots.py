@@ -8,13 +8,14 @@ sfmt.set_useOffset(False)
 
 def plotigrf(x,y,z,f,glat,glon,year,isv,mdl):
     fg,ax = subplots(2,2,sharex=True)
+    fg.suptitle(str(year))
     ax = ax.ravel()
     for a,i,j in zip(ax,(x,y,z),('x','y','z')):
-        hi = a.imshow(i,extent=(glon[0,0],glon[0,-1],glat[0,0],glat[-1,0]),
+        hi = a.pcolormesh(glon,glat,i,
                       cmap='bwr',
                       vmin=-6e4,vmax=6e4) #symmetrix vmin,vmax centers white at zero for bwr cmap
         fg.colorbar(hi,ax=a,format=sfmt)
-        a.set_title('IGRF{} $B_{}$-field on {:.3f}'.format(mdl,j,year))
+        a.set_title(f'IGRF{mdl} $B_{j}$-field')
 
     for a in ax[[0,2]]:
         a.set_ylabel('latitude (deg)')
@@ -23,7 +24,7 @@ def plotigrf(x,y,z,f,glat,glon,year,isv,mdl):
 
 
     if isv==0:
-        hi = a.imshow(f,extent=(glon[0,0],glon[0,-1],glat[0,0],glat[-1,0]))
+        hi = a.pcolormesh(glon,glat,f)
         fg.colorbar(hi,ax=a,format=sfmt)
         a.set_title('IGRF{} $B$-field: total intensity [nT] on {:.2f}'.format(mdl,year))
 

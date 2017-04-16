@@ -5,6 +5,7 @@ International Geomagnetic Reference Field IGRF12 and IGRF11...in Python!
 
 :Author Python API: Michael Hirsch, Ph.D.
 
+.. image:: .github.demoigrf.png
 
 Installation
 ============
