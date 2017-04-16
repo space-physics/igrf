@@ -22,7 +22,7 @@ Run Example
 ===========
 ::
 
-    python demo_igrf12.py
+    python DemoIGRF.py
 
 
 Reference
