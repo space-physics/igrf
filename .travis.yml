@@ -37,7 +37,7 @@ install:
     - source activate test
     - pip -q install coveralls
 
-    - conda install numpy xarray astropy scipy matplotlib seaborn
+    - conda install numpy xarray astropy scipy matplotlib seaborn h5py cython
     - python setup.py develop
 
 script: coverage run tests/test.py -v
