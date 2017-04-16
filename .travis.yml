@@ -30,12 +30,13 @@ install:
     - bash miniconda.sh -b -p $HOME/miniconda
     - export PATH=$HOME/miniconda/bin:$PATH
     - hash -r
-    
+
     - conda config --set always_yes yes --set changeps1 no
     - conda update -q conda
     - conda create -n test python=$pyv
     - source activate test
     - pip -q install coveralls
+
     - conda install numpy xarray matplotlib seaborn
     - python setup.py develop
 
