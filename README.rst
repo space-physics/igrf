@@ -24,7 +24,6 @@ Run Example
 
     python DemoIGRF.py
 
-
 Reference
 =========
 If you only want the plain Fortran program, you can do::
