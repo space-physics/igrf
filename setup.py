@@ -3,7 +3,7 @@ req = ['nose','numpy',
        'sciencedates']
 
 # %%
-from setuptool import find_packages
+from setuptools import find_packages
 from numpy.distutils.core import setup,Extension
 #%% install
 setup(name='pyigrf12',
