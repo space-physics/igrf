@@ -26,7 +26,7 @@ def plotigrf(x,y,z,f,glat,glon,year,isv,mdl):
     if isv==0:
         hi = a.pcolormesh(glon,glat,f)
         fg.colorbar(hi,ax=a,format=sfmt)
-        a.set_title('IGRF{} $B$-field: total intensity [nT] on {:.2f}'.format(mdl,year))
+        a.set_title(f'IGRF{mdl} $B$-field: total intensity [nT] on {year:.2f}')
 
 def plotdiff1112(x,x11,y,y11,z,z11,f,f11,glat,glon,year,isv):
     for i,j,k in zip((x,y,z),(x11,y11,z11),('x','y','z')):
@@ -36,7 +36,7 @@ def plotdiff1112(x,x11,y,y11,z,z11,f,f11,glat,glon,year,isv):
         fg.colorbar(hi,format=sfmt)
         ax.set_ylabel('latitude (deg)')
         ax.set_xlabel('longitude (deg)')
-        ax.set_title('IGRF12-IGRF11 $B_{}$-field comparison on {:.2f}'.format(k,year))
+        ax.set_title(f'IGRF12-IGRF11 $B_{k}$-field comparison on {year:.2f}')
 
     if isv==0:
         fg = figure()
@@ -45,4 +45,4 @@ def plotdiff1112(x,x11,y,y11,z,z11,f,f11,glat,glon,year,isv):
         fg.colorbar(hi)
         ax.set_xlabel('latitude (deg)')
         ax.set_ylabel('longitude (deg)')
-        ax.set_title('IGRF12-IGRF11 $B$-field: comparison total intensity [nT] on {:.2f}'.format(year))
+        ax.set_title(f'IGRF12-IGRF11 $B$-field: comparison total intensity [nT] on {year:.2f}')

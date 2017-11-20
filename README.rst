@@ -1,5 +1,6 @@
 .. image:: https://travis-ci.org/scivision/pyigrf12.svg?branch=master
     :target: https://travis-ci.org/scivision/pyigrf12
+    
 .. image:: https://coveralls.io/repos/github/scivision/pyigrf12/badge.svg?branch=master
     :target: https://coveralls.io/github/scivision/pyigrf12?branch=master
 
@@ -16,7 +17,7 @@ Installation
 ============
 ::
 
-    python setup.py develop
+    pip install -e .
 
 Run Example
 ===========

@@ -20,6 +20,7 @@ def gridigrf12(dtime,isv,itype,alt,glat,glon):
 
     return x.reshape(colat.shape), y.reshape(colat.shape), z.reshape(colat.shape),f.reshape(colat.shape), yeardec
 
+
 def runigrf12(dtime,isv,itype,alt,glat,glon):
 
     yeardec = datetime2yeardec(dtime)
@@ -34,6 +35,7 @@ def runigrf12(dtime,isv,itype,alt,glat,glon):
 
     return x,y,z,f
 
+
 def runigrf11(dtime,isv,itype,alt,glat,glon):
     import igrf11
 
@@ -46,8 +48,11 @@ def runigrf11(dtime,isv,itype,alt,glat,glon):
 
     return x.reshape(colat.shape), y.reshape(colat.shape), z.reshape(colat.shape),f.reshape(colat.shape)
 
+
 def latlon2colat(glat,glon):
     #atleast_1d for iteration later
-    colat = 90-atleast_1d(glat)
+    colat = 90 - atleast_1d(glat)
     elon = (360 + atleast_1d(glon)) % 360
+
     return colat,elon
+    
