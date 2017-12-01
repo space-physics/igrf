@@ -1,6 +1,7 @@
 #!/usr/bin/env python
-req = ['nose','numpy',
+install_requires = ['numpy',
        'sciencedates']
+tests_require=['nose','coveralls']
 
 # %%
 from setuptools import find_packages
@@ -12,7 +13,7 @@ setup(name='pyigrf12',
       author='Michael Hirsch, Ph.D.',
       url='https://github.com/scivision/pyigrf12',
       description='IGRF12 model accessed from Python',
-	  install_requires=req,
+	  install_requires=install_requires,
       ext_modules=[Extension(name='igrf12',
                            sources=['fortran/igrf12.f'],
                            f2py_options=['--quiet'])],
@@ -23,6 +24,8 @@ setup(name='pyigrf12',
           'Topic :: Scientific/Engineering :: Atmospheric Science',
           'Programming Language :: Python :: 3',
           ],
-      extras_requires={'plot':['gridaurora','matplotlib','seaborn']},
+      extras_requires={'plot':['gridaurora','matplotlib','seaborn'],
+                       'tests':tests_require,},
       python_requires='>=3.6',
+      tests_require=tests_require,
 	  )

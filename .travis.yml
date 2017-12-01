@@ -11,17 +11,14 @@ notifications:
     email: false
 
 git:
-    depth: 3
+  depth: 3
 
 addons:
   apt:
     packages:
       - gfortran
 
-before_install:
-  - pip -q install coveralls
-
-install: pip install -e .
+install: pip install -e .[tests]
 
 script: coverage run tests/test.py -v
 
