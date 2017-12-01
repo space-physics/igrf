@@ -7,8 +7,11 @@ python:
 os:
   - linux
 
+dist: trusty
+group: edge
+
 notifications:
-    email: false
+  email: false
 
 git:
   depth: 3
