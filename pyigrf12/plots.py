@@ -1,21 +1,27 @@
-from matplotlib.pyplot import figure,subplots
+from matplotlib.pyplot import figure
 from matplotlib.ticker import ScalarFormatter
+#
+import sciencedates
 #
 sfmt = ScalarFormatter(useMathText=True) #for 10^3 instead of 1e3
 sfmt.set_powerlimits((-2, 2))
 sfmt.set_scientific(True)
 sfmt.set_useOffset(False)
 
-def plotigrf(x,y,z,f,glat,glon,year,isv,mdl):
-    fg,ax = subplots(2,2,sharex=True)
-    fg.suptitle(str(year))
+def plotigrf(x,y,z,f,glat,glon,yeardec,isv,mdl):
+    fg = figure(figsize=(10,8))
+    ax = fg.subplots(2,2,sharex=True)
+
+    t = sciencedates.yeardec2datetime(yeardec)
+
+    fg.suptitle(f'IGRF{mdl} {t.isoformat()[:-9]}')
     ax = ax.ravel()
     for a,i,j in zip(ax,(x,y,z),('x','y','z')):
         hi = a.pcolormesh(glon,glat,i,
                       cmap='bwr',
                       vmin=-6e4,vmax=6e4) #symmetrix vmin,vmax centers white at zero for bwr cmap
         fg.colorbar(hi,ax=a,format=sfmt)
-        a.set_title(f'IGRF{mdl} $B_{j}$-field')
+        a.set_title(f'$B_{j}$ [nT]')
 
     for a in ax[[0,2]]:
         a.set_ylabel('latitude (deg)')
@@ -26,7 +32,7 @@ def plotigrf(x,y,z,f,glat,glon,year,isv,mdl):
     if isv==0:
         hi = a.pcolormesh(glon,glat,f)
         fg.colorbar(hi,ax=a,format=sfmt)
-        a.set_title(f'IGRF{mdl} $B$-field: total intensity [nT] on {year:.2f}')
+        a.set_title(f'$B$ total intensity [nT]')
 
 def plotdiff1112(x,x11,y,y11,z,z11,f,f11,glat,glon,year,isv):
     for i,j,k in zip((x,y,z),(x11,y11,z11),('x','y','z')):

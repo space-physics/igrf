@@ -7,11 +7,8 @@ python:
 os:
   - linux
 
-dist: trusty
-group: edge
+group: travis_latest
 
-notifications:
-  email: false
 
 git:
   depth: 3
@@ -23,6 +20,6 @@ addons:
 
 install: python -m pip install -e .[tests]
 
-script: coverage run tests/test.py -v
+script: coverage run tests/test_all.py -v
 
 after_success: coveralls

@@ -13,7 +13,7 @@ International Geomagnetic Reference Field IGRF12 and IGRF11...in Python!
 
 .. image:: .github/demoigrf.png
 
-Installation
+Install
 ============
 ::
 
