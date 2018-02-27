@@ -28,7 +28,7 @@ def gridigrf12(date:datetime, glat:float, glon:float, alt:float, isv:int=0, ityp
 
 def runigrf12(date:datetime, glat:float, glon:float, alt:float, isv:int=0, itype:int=1):
     """
-    date: datetime.date
+    date: datetime.date or decimal year yyyy.dddd
     glat, glon: geographic Latitude, Longitude
     alt: altitude [km] above sea level for itype==1
     isv: 0 for main geomagnetic field
@@ -36,7 +36,12 @@ def runigrf12(date:datetime, glat:float, glon:float, alt:float, isv:int=0, itype
     """
 
     # decimal year
-    yeardec = sciencedates.datetime2yeardec(date)
+    if isinstance(date,(datetime.date, datetime.datetime)):
+        yeardec = sciencedates.datetime2yeardec(date)
+    elif isinstance(yeardec,float): # assume decimate year
+        pass
+    else:
+        raise TypeError(f'unknown yeardec type {type(yeardec)}')
 
     colat, elon = latlon2colat(glat,glon)
 

@@ -8,7 +8,7 @@ from numpy.distutils.core import setup,Extension
 #%% install
 setup(name='pyigrf12',
       packages=find_packages(),
-      version='1.2.0',
+      version='1.2.1',
       author='Michael Hirsch, Ph.D.',
       url='https://github.com/scivision/pyigrf12',
       description='IGRF12 model accessed from Python',
