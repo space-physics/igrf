@@ -12,7 +12,7 @@ if __name__ == '__main__':
     p.add_argument('date', help='date of sim',nargs='?',default=datetime.date.today())
     p.add_argument('--isv',help='0: main field. 1: secular variation',type=int,default=0)
     p.add_argument('--itype',help='1: geodetic. 2: geocentric',type=int,default=1)
-    p.add_argument('-a','--altkm',help='(km) above sea level if itype=1, (km) from center of Earth if itype=2',type=float,nargs='+',default=[0])
+    p.add_argument('-a','--altkm',help='(km) above sea level if itype=1, (km) from center of Earth if itype=2',type=float,nargs='+',default=0)
     p.add_argument('-c','--latlon',help='geodetic latitude, longitude (deg)',type=float,nargs=2)
     p = p.parse_args()
 
