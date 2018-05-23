@@ -1,19 +1,18 @@
 #!/usr/bin/env python
 import datetime
 import numpy as np
-import unittest
 #
 import pyigrf12
 
-class BasicTests(unittest.TestCase):
+def test_igrf():
+    dt = datetime.datetime(2012,7,12,12)
 
-    def test_igrf(self):
-        dt = datetime.datetime(2012,7,12,12)
+    mag = pyigrf12.runigrf(dt,65,85,0)
 
-        x,y,z,f = pyigrf12.runigrf12(dt,65,85,0)
-
-        np.testing.assert_allclose((x.squeeze(),y.squeeze(),z.squeeze(),f.squeeze()),
-                    (9218.3206585840526,2530.4855755646345,59711.688907276119,60472.031429181705))
+    np.testing.assert_allclose(mag.Bnorth,9218.3206585840526)
+    np.testing.assert_allclose(mag.Beast, 2530.4855755646345)
+    np.testing.assert_allclose(mag.Bvert,59711.688907276119)
+    np.testing.assert_allclose(mag.Btotal,60472.031429181705)
 
 if __name__ == '__main__':
-    unittest.main()
+    np.testing.run_module_suite()

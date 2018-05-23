@@ -23,7 +23,7 @@ Run Example
 ===========
 ::
 
-    python DemoIGRF.py
+    python RunIGRF.py
 
 Reference
 =========

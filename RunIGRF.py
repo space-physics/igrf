@@ -3,12 +3,12 @@ from matplotlib.pyplot import show
 import datetime
 #
 import pyigrf12
-from pyigrf12.plots import plotigrf
+import pyigrf12.plots as plt
 
 
 if __name__ == '__main__':
     from argparse import ArgumentParser
-    p = ArgumentParser(description='calls IGRF from Python, a basic demo')
+    p = ArgumentParser(description='calls IGRF from Python, and plots the modeled geomagnetic field')
     p.add_argument('date', help='date of sim',nargs='?',default=datetime.date.today())
     p.add_argument('--isv',help='0: main field. 1: secular variation',type=int,default=0)
     p.add_argument('--itype',help='1: geodetic. 2: geocentric',type=int,default=1)
@@ -25,16 +25,14 @@ if __name__ == '__main__':
     else:
         raise ValueError('please input all 3 of lat,lon,alt or none of them')
 
-    x,y,z,f, yeardec = pyigrf12.gridigrf12(p.date,glat,glon,p.altkm, p.isv, p.itype )
-#    x11,y11,z11,f11 = testigrf11(p.date,glat,glon,p.altkm, p.isv, p.itype)
+    mag   = pyigrf12.gridigrf12(p.date,glat,glon,p.altkm, p.isv, p.itype)
+#   mag11 = pyigrf12.testigrf11(p.date,glat,glon,p.altkm, p.isv, p.itype)
 
     if glat.ndim==2:
-        plotigrf(x,y,z,f,glat,glon, yeardec, p.isv,'12')
-        #plotigrf(x,y,z,f,glat,glon,p.year,p.isv,'11')
+        plt.plotigrf(mag,'12')
 
-        #plotdiff1112(x,x11,y,y11,z,z11,f,f11,glat,glon,p.year,p.isv)
+        #plt.plotdiff1112(mag,mag11)
     else:
-        print('x y z f')
-        print(x,y,z,f)
+        print(mag)
 
     show()

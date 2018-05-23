@@ -2,6 +2,7 @@ language: python
 fast_finish: true
 
 python:
+  - 3.5
   - 3.6
 
 os:
@@ -18,8 +19,12 @@ addons:
     packages:
       - gfortran
 
-install: python -m pip install -e .[tests]
+install: pip -q install -e .[tests]
 
-script: coverage run tests/test_all.py -v
+script: pytest -v
 
-after_success: coveralls
+after_success: 
+  - if [[ $TRAVIS_PYTHON_VERSION == 3.6* ]]; then
+    coverage run ../tests/test_all.py;
+    coveralls;
+    fi

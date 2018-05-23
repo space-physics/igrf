@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-install_requires = ['numpy','sciencedates']
-tests_require=['nose','coveralls']
+install_requires = ['xarray','numpy','sciencedates']
+tests_require=['pytest','nose','coveralls']
 
 # %%
 from setuptools import find_packages
@@ -8,7 +8,7 @@ from numpy.distutils.core import setup,Extension
 #%% install
 setup(name='pyigrf12',
       packages=find_packages(),
-      version='1.2.1',
+      version='1.3.0',
       author='Michael Hirsch, Ph.D.',
       url='https://github.com/scivision/pyigrf12',
       description='IGRF12 model accessed from Python',
@@ -19,14 +19,16 @@ setup(name='pyigrf12',
                            f2py_options=['--quiet'],
                            extra_f77_compile_args=['-w'])],
       classifiers=[
-          'Intended Audience :: Science/Research',
           'Development Status :: 5 - Production/Stable',
+          'Intended Audience :: Science/Research',
           'License :: OSI Approved :: MIT License',
+          'Programming Language :: Python :: 3.5',
+          'Programming Language :: Python :: 3.6',
+          'Programming Language :: Python :: 3.7',
           'Topic :: Scientific/Engineering :: Atmospheric Science',
-          'Programming Language :: Python :: 3',
           ],
       extras_require={'plot':['matplotlib'],
                        'tests':tests_require,},
-      python_requires='>=3.6',
+      python_requires='>=3.5',
       tests_require=tests_require,
 	  )
