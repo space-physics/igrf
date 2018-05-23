@@ -4,6 +4,14 @@
 .. image:: https://coveralls.io/repos/github/scivision/pyigrf12/badge.svg?branch=master
     :target: https://coveralls.io/github/scivision/pyigrf12?branch=master
 
+.. image:: https://img.shields.io/pypi/pyversions/pyigrf12.svg
+  :target: https://pypi.python.org/pypi/pyigrf12
+  :alt: Python versions (PyPI)
+
+.. image::  https://img.shields.io/pypi/format/pyigrf12.svg
+  :target: https://pypi.python.org/pypi/pyigrf12
+  :alt: Distribution format (PyPI)
+
 ========
 igrf12py
 ========
