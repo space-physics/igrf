@@ -33,9 +33,12 @@ Otherwise, for the latest release from PyPi::
 
     python -m pip install pyigrf12
 
+You can test the install with::
+
+    pytest
+
 Run Example
 ===========
-
 ::
 
     python RunIGRF.py

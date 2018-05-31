@@ -4,7 +4,7 @@ from numpy.distutils.core import setup, Extension
 from typing import List
 
 install_requires: List[str] = ['xarray', 'numpy', 'sciencedates']
-tests_require = ['pytest', 'nose', 'coveralls']
+tests_require = ['pytest', 'nose', 'coveralls', 'mypy', 'flake8']
 # %% install
 setup(name='pyigrf12',
       packages=find_packages(),
