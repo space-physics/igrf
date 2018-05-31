@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 from setuptools import find_packages
 from numpy.distutils.core import setup, Extension
+from typing import List
 
-install_requires = ['xarray', 'numpy', 'sciencedates']
+install_requires: List[str] = ['xarray', 'numpy', 'sciencedates']
 tests_require = ['pytest', 'nose', 'coveralls']
 # %% install
 setup(name='pyigrf12',
       packages=find_packages(),
-      version='1.3.1',
+      version='1.3.2',
       author='Michael Hirsch, Ph.D.',
       url='https://github.com/scivision/pyigrf12',
       description='IGRF12 model with simple object-oriented Python interface',
@@ -21,7 +22,6 @@ setup(name='pyigrf12',
           'Development Status :: 5 - Production/Stable',
           'Intended Audience :: Science/Research',
           'License :: OSI Approved :: MIT License',
-          'Programming Language :: Python :: 3.5',
           'Programming Language :: Python :: 3.6',
           'Programming Language :: Python :: 3.7',
           'Topic :: Scientific/Engineering :: Atmospheric Science',

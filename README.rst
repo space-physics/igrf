@@ -15,7 +15,7 @@
 ========
 igrf12py
 ========
-International Geomagnetic Reference Field IGRF12 and IGRF11...in simple, object-oriented Python.
+International Geomagnetic Reference Field IGRF12 and IGRF11...in simple, object-oriented Python >= 3.6.
 
 :Author Python API: Michael Hirsch, Ph.D.
 
