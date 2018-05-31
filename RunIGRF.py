@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from matplotlib.pyplot import show
 import datetime
+import xarray
 #
 import pyigrf12
 import pyigrf12.plots as plt
@@ -22,17 +23,18 @@ if __name__ == '__main__':
                    nargs='+', default=0)
     p.add_argument('-c', '--latlon', help='geodetic latitude, longitude (deg)',
                    type=float, nargs=2)
-    p = p.parse_args()
+    P = p.parse_args()
 
     # do world-wide grid if no user input
-    if not p.altkm or not p.latlon:
+    if not P.altkm or not P.latlon:
         glat, glon = pyigrf12.latlonworldgrid()
-    elif p.altkm and p.latlon:
-        glat, glon = p.latlon
+    elif P.altkm and P.latlon:
+        glat, glon = P.latlon
     else:
         raise ValueError('please input all 3 of lat,lon,alt or none of them')
 
-    mag12 = pyigrf12.gridigrf12(p.date, glat, glon, p.altkm, p.isv, p.itype)
+    mag12: xarray.Dataset = pyigrf12.gridigrf12(P.date, glat, glon, P.altkm,
+                                                P.isv, P.itype)
 #   mag11 = pyigrf12.testigrf11(p.date,glat,glon,p.altkm, p.isv, p.itype)
 
     if glat.ndim == 2:

@@ -4,20 +4,23 @@ Michael Hirsch, Ph.D.
 """
 import xarray
 import numpy as np
-import datetime
+from datetime import datetime, date
+from typing import Union
 #
 import sciencedates
 #
 import igrf12
 
 
-def gridigrf12(date: datetime, glat: float, glon: float, alt: float,
+def gridigrf12(t: datetime,
+               glat: Union[np.ndarray, float], glon: Union[np.ndarray, float],
+               alt: Union[np.ndarray, float],
                isv: int=0, itype: int=1) -> xarray.Dataset:
 
     glat = np.atleast_1d(glat)
     glon = np.atleast_1d(glon)
 
-    yeardec = sciencedates.datetime2yeardec(date)
+    yeardec = sciencedates.datetime2yeardec(t)
     colat, elon = latlon2colat(glat.ravel(), glon.ravel())
 
     x = np.empty(colat.size)
@@ -37,7 +40,7 @@ def gridigrf12(date: datetime, glat: float, glon: float, alt: float,
         raise ValueError(f'glat/glon shapes: {glat.shape} {glon.shape}')
 
     mag = xarray.Dataset(coords=coords,
-                         attrs={'time': date, 'isv': isv})
+                         attrs={'time': t, 'isv': isv})
     mag['north'] = (('glat', 'glon'), x.reshape(glat.shape))
     mag['east'] = (('glat', 'glon'), y.reshape(glat.shape))
     mag['down'] = (('glat', 'glon'), z.reshape(glat.shape))
@@ -51,7 +54,8 @@ def gridigrf12(date: datetime, glat: float, glon: float, alt: float,
     return mag
 
 
-def igrf(date: datetime, glat: float, glon: float, alt: float,
+def igrf(t: datetime, glat: Union[np.ndarray, float],
+         glon: Union[np.ndarray, float], alt: Union[np.ndarray, float],
          isv: int=0, itype: int=1, model: str='12') -> xarray.Dataset:
     """
     date: datetime.date or decimal year yyyy.dddd
@@ -62,8 +66,8 @@ def igrf(date: datetime, glat: float, glon: float, alt: float,
     """
 
     # decimal year
-    if isinstance(date, (datetime.date, datetime.datetime)):
-        yeardec = sciencedates.datetime2yeardec(date)
+    if isinstance(t, (date, datetime)):
+        yeardec: float = sciencedates.datetime2yeardec(t)
     elif isinstance(yeardec, float):  # assume decimal year
         pass
     else:

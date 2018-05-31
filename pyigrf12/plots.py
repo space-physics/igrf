@@ -1,5 +1,6 @@
 from matplotlib.pyplot import figure
 from matplotlib.ticker import ScalarFormatter
+import xarray
 #
 sfmt = ScalarFormatter(useMathText=True)  # for 10^3 instead of 1e3
 sfmt.set_powerlimits((-2, 2))
@@ -7,7 +8,7 @@ sfmt.set_scientific(True)
 sfmt.set_useOffset(False)
 
 
-def plotigrf(mag, model):
+def plotigrf(mag: xarray.Dataset, model: str):
     mode = 'contour'
     fg = figure(figsize=(10, 8))
     ax = fg.subplots(2, 2, sharex=True)
@@ -64,7 +65,7 @@ def plotigrf(mag, model):
         a.set_xlabel('Geographic longitude (deg)')
 
 
-def plotdiff1112(mag12, mag11):
+def plotdiff1112(mag12: xarray.Dataset, mag11: xarray.Dataset):
     for i in ('x', 'y', 'z'):
         fg = figure()
         ax = fg.gca()
