@@ -11,11 +11,15 @@
 .. image::  https://img.shields.io/pypi/format/pyigrf12.svg
   :target: https://pypi.python.org/pypi/pyigrf12
   :alt: Distribution format (PyPI)
+  
+.. image:: http://pepy.tech/badge/pyigrf12
+   :target: http://pepy.tech/project/pyigrf12
+   :alt: PyPi Download stats
 
 ========
 igrf12py
 ========
-International Geomagnetic Reference Field IGRF12 and IGRF11...in simple, object-oriented Python.
+International Geomagnetic Reference Field IGRF12 and IGRF11...in simple, object-oriented Python >= 3.6.
 
 :Author Python API: Michael Hirsch, Ph.D.
 
@@ -33,9 +37,12 @@ Otherwise, for the latest release from PyPi::
 
     python -m pip install pyigrf12
 
+You can test the install with::
+
+    pytest
+
 Run Example
 ===========
-
 ::
 
     python RunIGRF.py

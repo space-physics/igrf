@@ -2,7 +2,6 @@ language: python
 fast_finish: true
 
 python:
-  - 3.5
   - 3.6
 
 os:
@@ -21,10 +20,13 @@ addons:
 
 install: pip -q install -e .[tests]
 
-script: pytest -v
+script: 
+  - pytest -sv
+  - mypy *[^setup].py --ignore-missing-imports
+  - flake8
 
 after_success: 
   - if [[ $TRAVIS_PYTHON_VERSION == 3.6* ]]; then
-    coverage run ../tests/test_all.py;
+    coverage run tests/test_all.py;
     coveralls;
     fi
