@@ -11,6 +11,10 @@
 .. image::  https://img.shields.io/pypi/format/pyigrf12.svg
   :target: https://pypi.python.org/pypi/pyigrf12
   :alt: Distribution format (PyPI)
+  
+.. image:: http://pepy.tech/badge/pyigrf12
+   :target: http://pepy.tech/project/pyigrf12
+   :alt: PyPi Download stats
 
 ========
 igrf12py
