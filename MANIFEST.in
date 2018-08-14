@@ -1,2 +1,2 @@
 include LICENSE
-includes tests/*.png
+include tests/*.png
