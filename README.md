@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/scivision/igrf12.svg?branch=master)](https://travis-ci.org/scivision/igrf12)
 [![Coverage Status](https://coveralls.io/repos/github/scivision/igrf12/badge.svg?branch=master)](https://coveralls.io/github/scivision/igrf12?branch=master)
+[![Build status](https://ci.appveyor.com/api/projects/status/55tjr3qgh0s7wmek?svg=true)](https://ci.appveyor.com/project/scivision/igrf12)
 [![Python versions (PyPI)](https://img.shields.io/pypi/pyversions/igrf12.svg)](https://pypi.python.org/pypi/igrf12)
 [![Distribution format (PyPI)](https://img.shields.io/pypi/format/igrf12.svg)](https://pypi.python.org/pypi/igrf12)
 [![PyPi Download stats](http://pepy.tech/badge/igrf12)](http://pepy.tech/project/igrf12)
@@ -29,7 +30,7 @@ Optionally, test the install with:
 ## Example
 To make the plots in this readme:
 ```sh
-python RunIGRF.py
+igrf12
 ```
 
 using as a Python module at geodetic coordinates 65N, 148W:
@@ -53,7 +54,9 @@ Data variables:
     decl     (alt_km) float64 20.29
 ```
 
-The IGRF model may be specified with the `model=12` option, where `11` enacts IGRF11.
+The IGRF model may be specified with the `igrf12.igrf(model=)` option:
+* `11`: IGRF11
+* `12`: IGRF12
 
 ## Reference
 
