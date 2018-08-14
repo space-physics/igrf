@@ -1,32 +1,34 @@
 language: python
-fast_finish: true
-
-python:
-  - 3.6
-
-os:
-  - linux
-
+sudo: required
+dist: xenial
 group: travis_latest
-
 
 git:
   depth: 3
+  quiet: true
+
+python:
+- 3.6
+- 3.7
+
+os:
+- linux
 
 addons:
   apt:
     packages:
-      - gfortran
+    - gfortran
 
-install: pip -q install -e .[tests]
+install: pip install -e .[tests]
 
-script: 
-  - pytest -sv
-  - mypy *[^setup].py --ignore-missing-imports
-  - flake8
+script:
+- pytest -rsv
+- flake8
+- mypy . --ignore-missing-imports
 
-after_success: 
-  - if [[ $TRAVIS_PYTHON_VERSION == 3.6* ]]; then
-    coverage run tests/test_all.py;
-    coveralls;
-    fi
+after_success:
+- if [[ $TRAVIS_PYTHON_VERSION == 3.6* ]]; then
+  pytest --cov;
+  coveralls;
+  fi
+

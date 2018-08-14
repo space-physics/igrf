@@ -2,13 +2,13 @@
 from matplotlib.pyplot import show
 import datetime
 import xarray
-#
-import pyigrf12
-import pyigrf12.plots as plt
+from argparse import ArgumentParser
+import igrf12
+import igrf12.plots as plt
 
 
-if __name__ == '__main__':
-    from argparse import ArgumentParser
+def main():
+
     p = ArgumentParser(description='calls IGRF from Python, and plots '
                        'the modeled geomagnetic field')
     p.add_argument('date', help='date of sim', nargs='?',
@@ -27,15 +27,15 @@ if __name__ == '__main__':
 
     # do world-wide grid if no user input
     if not P.altkm or not P.latlon:
-        glat, glon = pyigrf12.latlonworldgrid()
+        glat, glon = igrf12.latlonworldgrid()
     elif P.altkm and P.latlon:
         glat, glon = P.latlon
     else:
         raise ValueError('please input all 3 of lat,lon,alt or none of them')
 
-    mag12: xarray.Dataset = pyigrf12.gridigrf12(P.date, glat, glon, P.altkm,
-                                                P.isv, P.itype)
-#   mag11 = pyigrf12.testigrf11(p.date,glat,glon,p.altkm, p.isv, p.itype)
+    mag12: xarray.Dataset = igrf12.gridigrf12(P.date, glat, glon, P.altkm,
+                                              P.isv, P.itype)
+#   mag11 = igrf12.testigrf11(p.date,glat,glon,p.altkm, p.isv, p.itype)
 
     if glat.ndim == 2:
         plt.plotigrf(mag12, '12')
@@ -45,3 +45,7 @@ if __name__ == '__main__':
         print(mag12)
 
     show()
+
+
+if __name__ == '__main__':
+    main()

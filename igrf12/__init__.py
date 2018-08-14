@@ -5,11 +5,13 @@ Michael Hirsch, Ph.D.
 import xarray
 import numpy as np
 from datetime import datetime, date
-from typing import Union
-#
+from typing import Union, Tuple
 import sciencedates
-#
-import igrf12
+import igrf12fort
+try:
+    import igrf11fort
+except ImportError:
+    igrf11fort = None
 
 
 def gridigrf12(t: datetime,
@@ -29,8 +31,8 @@ def gridigrf12(t: datetime,
     f = np.empty_like(x)
 
     for i, (clt, eln) in enumerate(zip(colat, elon)):
-        x[i], y[i], z[i], f[i] = igrf12.igrf12syn(isv, yeardec, itype, alt,
-                                                  clt, eln)
+        x[i], y[i], z[i], f[i] = igrf12fort.igrf12syn(isv, yeardec, itype, alt,
+                                                      clt, eln)
 # %% assemble output
     if glat.ndim == 2 and glon.ndim == 2:  # assume meshgrid
         coords = {'glat': glat[:, 0], 'glon': glon[0, :]}
@@ -54,9 +56,9 @@ def gridigrf12(t: datetime,
     return mag
 
 
-def igrf(t: datetime, glat: Union[np.ndarray, float],
+def igrf(time: datetime, glat: Union[np.ndarray, float],
          glon: Union[np.ndarray, float], alt: Union[np.ndarray, float],
-         isv: int=0, itype: int=1, model: str='12') -> xarray.Dataset:
+         isv: int=0, itype: int=1, model: int=12) -> xarray.Dataset:
     """
     date: datetime.date or decimal year yyyy.dddd
     glat, glon: geographic Latitude, Longitude
@@ -66,12 +68,12 @@ def igrf(t: datetime, glat: Union[np.ndarray, float],
     """
 
     # decimal year
-    if isinstance(t, (date, datetime)):
-        yeardec: float = sciencedates.datetime2yeardec(t)
-    elif isinstance(yeardec, float):  # assume decimal year
-        pass
+    if isinstance(time, (str, date, datetime)):
+        yeardec = sciencedates.datetime2yeardec(time)
+    elif isinstance(time, float):  # assume decimal year
+        yeardec = time
     else:
-        raise TypeError(f'unknown yeardec type {type(yeardec)}')
+        raise TypeError(f'unknown time format {type(time)}')
 
     colat, elon = latlon2colat(glat, glon)
 
@@ -83,15 +85,14 @@ def igrf(t: datetime, glat: Union[np.ndarray, float],
     Bvert = np.empty_like(Bnorth)
     Btotal = np.empty_like(Bnorth)
     for i, a in enumerate(alt):
-        if model == '12':
-            Bnorth[i], Beast[i], Bvert[i], Btotal[i] = igrf12.igrf12syn(isv,
-                  yeardec, itype, a,  colat, elon)  # noqa E128
-        elif model == '11':
-            import igrf11
-            Bnorth[i], Beast[i], Bvert[i], Btotal[i] = igrf11.igrf11syn(isv,
-                                             yeardec, itype, a, colat, elon)  # noqa E128
+        if model == 12:
+            Bnorth[i], Beast[i], Bvert[i], Btotal[i] = igrf12fort.igrf12syn(isv,
+                                                                            yeardec, itype, a,  colat, elon)
+        elif model == 11:
+            Bnorth[i], Beast[i], Bvert[i], Btotal[i] = igrf11fort.igrf11syn(isv,
+                                                                            yeardec, itype, a, colat, elon)
         else:
-            raise ValueError('unknown IGRF model {}'.format(model))
+            raise ValueError(f'unknown IGRF model {model}')
 # %% assemble output
     mag = xarray.Dataset({'north': ('alt_km', Bnorth),
                           'east': ('alt_km', Beast),
@@ -108,7 +109,7 @@ def igrf(t: datetime, glat: Union[np.ndarray, float],
 
 
 # %% utility functions
-def mag_vector2incl_decl(x: float, y: float, z: float) -> tuple:
+def mag_vector2incl_decl(x: float, y: float, z: float) -> Tuple[float, float]:
     """
     Inputs:
     -------
@@ -132,7 +133,7 @@ def mag_vector2incl_decl(x: float, y: float, z: float) -> tuple:
     return decl, incl
 
 
-def latlon2colat(glat: float, glon: float):
+def latlon2colat(glat: float, glon: float) -> Tuple[np.ndarray, np.ndarray]:
     # atleast_1d for iteration later
     colat = 90 - np.atleast_1d(glat)
     elon = (360 + np.atleast_1d(glon)) % 360
@@ -140,8 +141,9 @@ def latlon2colat(glat: float, glon: float):
     return colat, elon
 
 
-def latlonworldgrid(latstep: int=5, lonstep: int=5):
+def latlonworldgrid(latstep: int=5, lonstep: int=5) -> Tuple[np.ndarray, np.ndarray]:
     lat = np.arange(-90., 90 + latstep, latstep)
     lon = np.arange(-180., 180 + lonstep, lonstep)
     glon, glat = np.meshgrid(lon, lat)
+
     return glat, glon
