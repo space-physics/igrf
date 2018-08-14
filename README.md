@@ -26,6 +26,12 @@ Otherwise, for the latest release from PyPi:
 Optionally, test the install with:
 
     pytest
+    
+### Windows
+
+1. install [gfortran for Windows](https://www.scivision.co/windows-gcc-gfortran-cmake-make-install/)
+2. install [Visual Studio 2017 Build Tools](https://www.scivision.co/python-windows-visual-c++-14-required/)
+3. `python -m pip install -e .`
 
 ## Example
 To make the plots in this readme:
