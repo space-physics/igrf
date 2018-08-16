@@ -15,7 +15,13 @@ International Geomagnetic Reference Field IGRF12 and IGRF11...in simple, object-
 
 ## Install
 
-To get the development version, `git clone` and then:
+A Fortran compiler is required, such as `gfortran`:
+
+* Linux: `apt install gfortran`
+* Mac: `brew install gcc`
+* [gfortran for Windows](https://www.scivision.co/windows-gcc-gfortran-cmake-make-install/) (MinGW)
+
+To get the IGRF12 development version, `git clone` and then:
 
     python -m pip install -e .
 
@@ -28,17 +34,12 @@ Optionally, test the install with:
     pytest
     
 ### Windows
+If you get ImportError on Windows for the Fortran module, try from the `iri2016` directory:
+```posh
+del *.pyd
+python setup.py build_ext --inplace --compiler=mingw32
+```
 
-
-1. install [gfortran for Windows](https://www.scivision.co/windows-gcc-gfortran-cmake-make-install/) (MinGW)
-2. build the Fortran modules, forcing the MinGW compilers to be used instead of Visual Studio.
-   ```sh
-   python setup.py build_ext --inplace --compiler=mingw32
-   ```
-3. install the rest
-   ```sh
-   pip install -e .
-   ```
 
 ## Example
 To make the plots in this readme:

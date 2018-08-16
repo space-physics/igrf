@@ -1,25 +1,25 @@
 image:
-# - Visual Studio 2017
+- Visual Studio 2017
 - Ubuntu
 
 stack: python 3
 
 environment:
-  PY_DIR: C:\Python36-x64
   MINGW_DIR: C:\mingw-w64\x86_64-7.2.0-posix-seh-rt_v5-rev1\mingw64\bin
+  PY_DIR: C:\Python37-x64
 
 clone_depth: 3
 
 build: off
 
 init:
-- cmd: set PATH=%PY_DIR%;%PY_DIR%\Scripts;%PATH%
 - cmd: set PATH=%MINGW_DIR%;%PATH%
+- cmd: set PATH=%PY_DIR%;%PY_DIR%\Scripts;%PATH%
 
 install:
-- cmd: pip install numpy
-- cmd: python setup.py build_ext --inplace --compiler=mingw32
 - pip install -e .[tests]
+- cmd: del *.pyd
+- cmd: python setup.py build_ext --inplace --compiler=mingw32
 
 test_script: pytest -rsv
 
