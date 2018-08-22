@@ -77,6 +77,7 @@ The IGRF model may be specified with the `igrf12.igrf(model=)` option:
 
 ### Matlab
 Matlab &ge; R2014b can seamlessly call Python modules, as in `igrf12.m`.
+Instead of the $1000 Aerospace Toolbox, use this free IGRF12 for Matlab.
 
 ## Reference
 
