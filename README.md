@@ -7,7 +7,7 @@
 
 # IGRF 2012 in Python
 
-International Geomagnetic Reference Field IGRF12 and IGRF11...in simple, object-oriented Python >= 3.6.
+International Geomagnetic Reference Field IGRF12 and IGRF11...in simple, object-oriented Python &ge; 3.6 or Matlab &ge; R2014b.
 
 ![image](tests/incldecl.png)
 
@@ -22,16 +22,19 @@ A Fortran compiler is required, such as `gfortran`:
 * [gfortran for Windows](https://www.scivision.co/windows-gcc-gfortran-cmake-make-install/) (MinGW)
 
 To get the IGRF12 development version, `git clone` and then:
-
-    python -m pip install -e .
+```sh
+python -m pip install -e .
+```
 
 Otherwise, for the latest release from PyPi:
-
-    python -m pip install igrf12
+```sh
+python -m pip install igrf12
+```
 
 Optionally, test the install with:
-
-    pytest
+```sh
+pytest
+```
     
 ### Windows
 If you get ImportError on Windows for the Fortran module, try from the `iri2016` directory:
@@ -71,6 +74,9 @@ Data variables:
 The IGRF model may be specified with the `igrf12.igrf(model=)` option:
 * `11`: IGRF11
 * `12`: IGRF12
+
+### Matlab
+Matlab &ge; R2014b can seamlessly call Python modules, as in `igrf12.m`.
 
 ## Reference
 
