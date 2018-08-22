@@ -34,4 +34,4 @@ def test_igrf11():
 
 
 if __name__ == '__main__':
-    pytest.main(['-x', __file__])
+    pytest.main(['-xv', __file__])
