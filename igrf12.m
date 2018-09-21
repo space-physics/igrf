@@ -1,6 +1,7 @@
 function igrf12()
-% quick demo calling IGRF12 model from Matlab.
+%% IGRF12 model from Matlab.
 % https://www.scivision.co/matlab-python-user-module-import/
+assert(~verLessThan('matlab', '9.5'), 'Matlab >= R2018b required')
 
 % geographic WGS84 lat,lon,alt
 glat = 65.1;
