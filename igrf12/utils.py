@@ -35,7 +35,7 @@ def latlon2colat(glat: float, glon: float) -> Tuple[np.ndarray, np.ndarray]:
     return colat, elon
 
 
-def latlonworldgrid(latstep: int=5, lonstep: int=5) -> Tuple[np.ndarray, np.ndarray]:
+def latlonworldgrid(latstep: int = 5, lonstep: int = 5) -> Tuple[np.ndarray, np.ndarray]:
     lat = np.arange(-90., 90 + latstep, latstep)
     lon = np.arange(-180., 180 + lonstep, lonstep)
     glon, glat = np.meshgrid(lon, lat)

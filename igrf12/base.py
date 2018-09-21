@@ -14,7 +14,7 @@ except ImportError:
 def gridigrf12(t: datetime,
                glat: Union[np.ndarray, float], glon: Union[np.ndarray, float],
                alt_km: Union[np.ndarray, float],
-               isv: int=0, itype: int=1) -> xarray.Dataset:
+               isv: int = 0, itype: int = 1) -> xarray.Dataset:
 
     glat = np.atleast_1d(glat)
     glon = np.atleast_1d(glon)
@@ -55,7 +55,7 @@ def gridigrf12(t: datetime,
 def igrf(time: datetime, glat: Union[np.ndarray, float],
          glon: Union[np.ndarray, float],
          alt_km: Union[np.ndarray, float],
-         isv: int=0, itype: int=1, model: int=12) -> xarray.Dataset:
+         isv: int = 0, itype: int = 1, model: int = 12) -> xarray.Dataset:
     """
     date: datetime.date or decimal year yyyy.dddd
     glat, glon: geographic Latitude, Longitude

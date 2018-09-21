@@ -7,7 +7,7 @@
 
 # IGRF 2012 in Python
 
-International Geomagnetic Reference Field IGRF12 and IGRF11...in simple, object-oriented Python &ge; 3.6 or Matlab &ge; R2014b.
+International Geomagnetic Reference Field IGRF12 and IGRF11...in simple, object-oriented Python &ge; 3.6 or Matlab.
 
 ![image](tests/incldecl.png)
 
@@ -76,7 +76,7 @@ The IGRF model may be specified with the `igrf12.igrf(model=)` option:
 * `12`: IGRF12
 
 ### Matlab
-Matlab &ge; R2014b can seamlessly call Python modules, as in `igrf12.m`.
+Matlab can seamlessly call Python modules, as in `igrf12.m`.
 Instead of the $1000 Aerospace Toolbox, use this free IGRF12 for Matlab.
 
 ## Reference

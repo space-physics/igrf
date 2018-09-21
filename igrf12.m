@@ -19,28 +19,6 @@ Btotal = xarray2mat(B{'total'})
 end
 
 
-function V = xarray2mat(V)
-  % convert xarray 2-D array to Matlab matrix
-
-
-V = V.values;
-S = V.shape;
-V = cell2mat(cell(V.ravel('F').tolist()));
-
-if ~isscalar(V) && ~isvector(V)
-  V = reshape(V,[int64(S{1}), int64(S{2})]);
+function M = xarray2mat(V)
+M = double(py.numpy.asfortranarray(V));
 end
-
-end
-
-function I = xarrayind2vector(V,key)
-
-C = cell(V{1}.indexes{key}.values.tolist);  % might be numeric or cell array of strings
-
-if iscellstr(C) || any(class(C{1})=='py.str')
-    I=cellfun(@char,C, 'uniformoutput',false);
-else
-    I = cell2mat();
-end % if
-
-end % function
