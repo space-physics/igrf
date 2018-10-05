@@ -2,7 +2,6 @@
 [![Coverage Status](https://coveralls.io/repos/github/scivision/igrf12/badge.svg?branch=master)](https://coveralls.io/github/scivision/igrf12?branch=master)
 [![Build status](https://ci.appveyor.com/api/projects/status/55tjr3qgh0s7wmek?svg=true)](https://ci.appveyor.com/project/scivision/igrf12)
 [![Python versions (PyPI)](https://img.shields.io/pypi/pyversions/igrf12.svg)](https://pypi.python.org/pypi/igrf12)
-[![Distribution format (PyPI)](https://img.shields.io/pypi/format/igrf12.svg)](https://pypi.python.org/pypi/igrf12)
 [![PyPi Download stats](http://pepy.tech/badge/igrf12)](http://pepy.tech/project/igrf12)
 
 # IGRF 2012 in Python
