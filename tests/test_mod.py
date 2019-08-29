@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 import pytest
 from pytest import approx
+
 #
 import igrf12
 
-time = '2010-07-12'
+time = "2010-07-12"
 
 
 def test_igrf12():
@@ -33,5 +34,5 @@ def test_igrf11():
     assert mag.decl.item() == approx(15.407924)
 
 
-if __name__ == '__main__':
-    pytest.main(['-xv', __file__])
+if __name__ == "__main__":
+    pytest.main(["-xv", __file__])

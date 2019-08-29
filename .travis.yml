@@ -2,14 +2,8 @@ language: python
 group: travis_latest
 
 git:
-  depth: 3
+  depth: 25
   quiet: true
-
-python:
-- 3.6
-
-os:
-- linux
 
 addons:
   apt:
@@ -19,13 +13,6 @@ addons:
 install: pip install -e .[tests]
 
 script:
-- pytest -rsv
+- pytest -r a -v
 - flake8
-- mypy . --ignore-missing-imports
-
-after_success:
-- if [[ $TRAVIS_PYTHON_VERSION == 3.6* ]]; then
-  pytest --cov --cov-config=setup.cfg;
-  coveralls;
-  fi
-
+- mypy .

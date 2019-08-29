@@ -18,7 +18,7 @@ A Fortran compiler is required, such as `gfortran`:
 
 * Linux: `apt install gfortran`
 * Mac: `brew install gcc`
-* [gfortran for Windows](https://www.scivision.co/windows-gcc-gfortran-cmake-make-install/) (MinGW)
+* [gfortran for Windows](https://www.scivision.dev/windows-gcc-gfortran-cmake-make-install/) (MinGW)
 
 To get the IGRF12 development version, `git clone` and then:
 ```sh
@@ -34,7 +34,7 @@ Optionally, test the install with:
 ```sh
 pytest
 ```
-    
+
 ### Windows
 If you get ImportError on Windows for the Fortran module, try from the `iri2016` directory:
 ```posh

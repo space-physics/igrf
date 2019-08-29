@@ -1,6 +1,6 @@
 image:
 - Visual Studio 2017
-- Ubuntu
+- Ubuntu1804
 
 stack: python 3
 
@@ -19,5 +19,5 @@ init:
 install:
 - pip install -e .[tests]
 
-test_script: pytest -rsv
+test_script: pytest -r a -v
 
