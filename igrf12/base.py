@@ -92,23 +92,14 @@ def igrf(
     Btotal = np.empty_like(Bnorth)
     for i, a in enumerate(alt_km):
         if model == 12:
-            Bnorth[i], Beast[i], Bvert[i], Btotal[i] = igrf12fort.igrf12syn(
-                isv, yeardec, itype, a, colat, elon
-            )
+            Bnorth[i], Beast[i], Bvert[i], Btotal[i] = igrf12fort.igrf12syn(isv, yeardec, itype, a, colat, elon)
         elif model == 11:
-            Bnorth[i], Beast[i], Bvert[i], Btotal[i] = igrf11fort.igrf11syn(
-                isv, yeardec, itype, a, colat, elon
-            )
+            Bnorth[i], Beast[i], Bvert[i], Btotal[i] = igrf11fort.igrf11syn(isv, yeardec, itype, a, colat, elon)
         else:
             raise ValueError(f"unknown IGRF model {model}")
     # %% assemble output
     mag = xarray.Dataset(
-        {
-            "north": ("alt_km", Bnorth),
-            "east": ("alt_km", Beast),
-            "down": ("alt_km", Bvert),
-            "total": ("alt_km", Btotal),
-        },
+        {"north": ("alt_km", Bnorth), "east": ("alt_km", Beast), "down": ("alt_km", Bvert), "total": ("alt_km", Btotal)},
         coords={"alt_km": alt_km},
     )
 

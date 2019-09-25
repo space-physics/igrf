@@ -9,9 +9,7 @@ import igrf12.plots as plt
 
 def main():
 
-    p = ArgumentParser(
-        description="calls IGRF from Python, and plots " "the modeled geomagnetic field"
-    )
+    p = ArgumentParser(description="calls IGRF from Python, and plots " "the modeled geomagnetic field")
     p.add_argument("date", help="date of sim", nargs="?", default=datetime.date.today())
     p.add_argument("--isv", help="0: main field. 1: secular variation", type=int, default=0)
     p.add_argument("--itype", help="1: geodetic. 2: geocentric", type=int, default=1)
@@ -23,9 +21,7 @@ def main():
         nargs="+",
         default=0,
     )
-    p.add_argument(
-        "-c", "--latlon", help="geodetic latitude, longitude (deg)", type=float, nargs=2
-    )
+    p.add_argument("-c", "--latlon", help="geodetic latitude, longitude (deg)", type=float, nargs=2)
     P = p.parse_args()
 
     # do world-wide grid if no user input

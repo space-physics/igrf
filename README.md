@@ -1,6 +1,7 @@
-[![Build Status](https://travis-ci.org/scivision/igrf12.svg?branch=master)](https://travis-ci.org/scivision/igrf12)
-[![Coverage Status](https://coveralls.io/repos/github/scivision/igrf12/badge.svg?branch=master)](https://coveralls.io/github/scivision/igrf12?branch=master)
-[![Build status](https://ci.appveyor.com/api/projects/status/55tjr3qgh0s7wmek?svg=true)](https://ci.appveyor.com/project/scivision/igrf12)
+
+
+[![Actions Status](https://github.com/space-physics/igrf12/workflows/ci/badge.svg)](https://github.com/space-physics/igrf12/actions)
+
 [![Python versions (PyPI)](https://img.shields.io/pypi/pyversions/igrf12.svg)](https://pypi.python.org/pypi/igrf12)
 [![PyPi Download stats](http://pepy.tech/badge/igrf12)](http://pepy.tech/project/igrf12)
 
@@ -19,6 +20,11 @@ A Fortran compiler is required, such as `gfortran`:
 * Linux: `apt install gfortran`
 * Mac: `brew install gcc`
 * [gfortran for Windows](https://www.scivision.dev/windows-gcc-gfortran-cmake-make-install/) (MinGW)
+   Windows only: from Powershell:
+
+   ```posh
+   echo "[build]`ncompiler=mingw32" | Out-File -Encoding ASCII ~/pydistutils.cfg
+   ```
 
 To get the IGRF12 development version, `git clone` and then:
 ```sh
@@ -37,6 +43,7 @@ pytest
 
 ### Windows
 If you get ImportError on Windows for the Fortran module, try from the `iri2016` directory:
+
 ```posh
 del *.pyd
 python setup.py build_ext --inplace --compiler=mingw32
@@ -83,10 +90,9 @@ Instead of the $1000 Aerospace Toolbox, use this free IGRF12 for Matlab.
 If you only want the plain Fortran program, you can do:
 
 ```sh
-cd bin
+cmake -B build
 
-cmake ../src
-cmake --build .
+cmake --build build --parallel
 
 ./testigrf
 ```
