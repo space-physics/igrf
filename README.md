@@ -1,4 +1,4 @@
-
+[![DOI](https://zenodo.org/badge/33064474.svg)](https://zenodo.org/badge/latestdoi/33064474)
 
 [![Actions Status](https://github.com/space-physics/igrf12/workflows/ci/badge.svg)](https://github.com/space-physics/igrf12/actions)
 
