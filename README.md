@@ -1,6 +1,7 @@
 [![DOI](https://zenodo.org/badge/33064474.svg)](https://zenodo.org/badge/latestdoi/33064474)
 
 [![Actions Status](https://github.com/space-physics/igrf12/workflows/ci/badge.svg)](https://github.com/space-physics/igrf12/actions)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/space-physics/igrf12.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/space-physics/igrf12/context:python)
 
 [![Python versions (PyPI)](https://img.shields.io/pypi/pyversions/igrf12.svg)](https://pypi.python.org/pypi/igrf12)
 [![PyPi Download stats](http://pepy.tech/badge/igrf12)](http://pepy.tech/project/igrf12)
