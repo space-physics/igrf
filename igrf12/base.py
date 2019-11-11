@@ -1,10 +1,9 @@
 from typing import Union
 import xarray
-import sciencedates
 from datetime import datetime, date
 import igrf12fort
 import numpy as np
-from .utils import latlon2colat, mag_vector2incl_decl
+from .utils import latlon2colat, mag_vector2incl_decl, datetime2yeardec
 
 try:
     import igrf11fort
@@ -24,7 +23,7 @@ def gridigrf12(
     glat = np.atleast_1d(glat)
     glon = np.atleast_1d(glon)
 
-    yeardec = sciencedates.datetime2yeardec(t)
+    yeardec = datetime2yeardec(t)
     colat, elon = latlon2colat(glat.ravel(), glon.ravel())
 
     x = np.empty(colat.size)
@@ -75,7 +74,7 @@ def igrf(
 
     # decimal year
     if isinstance(time, (str, date, datetime)):
-        yeardec = sciencedates.datetime2yeardec(time)
+        yeardec = datetime2yeardec(time)
     elif isinstance(time, float):  # assume decimal year
         yeardec = time
     else:
