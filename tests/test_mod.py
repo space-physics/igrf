@@ -2,7 +2,6 @@
 import pytest
 from pytest import approx
 
-#
 import igrf12
 
 time = "2010-07-12"
@@ -35,4 +34,4 @@ def test_igrf11():
 
 
 if __name__ == "__main__":
-    pytest.main(["-xv", __file__])
+    pytest.main([__file__])
