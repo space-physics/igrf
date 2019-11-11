@@ -2,7 +2,6 @@ from matplotlib.pyplot import figure
 from matplotlib.ticker import ScalarFormatter
 import xarray
 
-#
 sfmt = ScalarFormatter(useMathText=True)  # for 10^3 instead of 1e3
 sfmt.set_powerlimits((-2, 2))
 sfmt.set_scientific(True)

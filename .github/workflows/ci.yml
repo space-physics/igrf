@@ -1,6 +1,12 @@
 name: ci
 
-on: [push, pull_request]
+on:
+  push:
+    paths:
+    - "**.py"
+  pull_request:
+    paths:
+    - "**.py"
 
 jobs:
 
@@ -12,10 +18,14 @@ jobs:
       with:
         python-version: '3.x'
     - run: sudo apt install -yq gfortran
-    - run: pip install -e .[tests,lint]
+    - run: pip install .[tests,lint]
     - run: flake8
     - run: mypy .
-    - run: pytest -r a -v
+    - run: pytest
+      working-directory: tests
+      env:
+        FC: gfortran
+        CC: gcc
 
   macos:
     runs-on: macos-latest
@@ -25,8 +35,12 @@ jobs:
       with:
         python-version: '3.x'
     - run: brew install gcc
-    - run: pip install -e .[tests]
-    - run: pytest -r a -v
+    - run: pip install .[tests]
+    - run: pytest
+      working-directory: tests
+      env:
+        FC: gfortran-9
+        CC: gcc-9
 
   windows:
     runs-on: windows-latest
@@ -37,5 +51,9 @@ jobs:
         python-version: '3.x'
     - run: echo "[build]`ncompiler=mingw32" | Out-File -Encoding ASCII ~/pydistutils.cfg
       shell: powershell
-    - run: pip install -e .[tests]
-    - run: pytest -r a -v
+    - run: pip install .[tests]
+    - run: pytest
+      working-directory: tests
+      env:
+        FC: gfortran
+        CC: gcc
