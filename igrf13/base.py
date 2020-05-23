@@ -1,9 +1,14 @@
 from typing import Union
 import xarray
 from datetime import datetime, date
-import igrf12fort
+import igrf13fort
 import numpy as np
 from .utils import latlon2colat, mag_vector2incl_decl, datetime2yeardec
+
+try:
+    import igrf12fort
+except ImportError:
+    igrf12fort = None
 
 try:
     import igrf11fort
@@ -11,7 +16,7 @@ except ImportError:
     igrf11fort = None
 
 
-def gridigrf12(
+def gridigrf13(
     t: datetime,
     glat: Union[np.ndarray, float],
     glon: Union[np.ndarray, float],
@@ -32,7 +37,7 @@ def gridigrf12(
     f = np.empty_like(x)
 
     for i, (clt, eln) in enumerate(zip(colat, elon)):
-        x[i], y[i], z[i], f[i] = igrf12fort.igrf12syn(isv, yeardec, itype, alt_km, clt, eln)
+        x[i], y[i], z[i], f[i] = igrf13fort.igrf13syn(isv, yeardec, itype, alt_km, clt, eln)
     # %% assemble output
     if glat.ndim == 2 and glon.ndim == 2:  # assume meshgrid
         coords = {"glat": glat[:, 0], "glon": glon[0, :]}
@@ -90,8 +95,11 @@ def igrf(
     Bvert = np.empty_like(Bnorth)
     Btotal = np.empty_like(Bnorth)
     for i, a in enumerate(alt_km):
-        if model == 12:
+        if model == 13:
+            Bnorth[i], Beast[i], Bvert[i], Btotal[i] = igrf13fort.igrf13syn(isv, yeardec, itype, a, colat, elon)
+        elif model == 12:
             Bnorth[i], Beast[i], Bvert[i], Btotal[i] = igrf12fort.igrf12syn(isv, yeardec, itype, a, colat, elon)
+
         elif model == 11:
             Bnorth[i], Beast[i], Bvert[i], Btotal[i] = igrf11fort.igrf11syn(isv, yeardec, itype, a, colat, elon)
         else:

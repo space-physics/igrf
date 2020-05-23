@@ -6,9 +6,9 @@
 [![Python versions (PyPI)](https://img.shields.io/pypi/pyversions/igrf12.svg)](https://pypi.python.org/pypi/igrf12)
 [![PyPi Download stats](http://pepy.tech/badge/igrf12)](http://pepy.tech/project/igrf12)
 
-# IGRF 2012 in Python
+# IGRF 13 in Python
 
-International Geomagnetic Reference Field IGRF12 and IGRF11...in simple, object-oriented Python &ge; 3.6 or Matlab.
+International Geomagnetic Reference Field IGRF13, IGRF12 and IGRF11...in simple, object-oriented Python &ge; 3.6 or Matlab.
 
 ![image](tests/incldecl.png)
 
@@ -27,7 +27,7 @@ A Fortran compiler is required, such as `gfortran`:
    echo "[build]`ncompiler=mingw32" | Out-File -Encoding ASCII ~/pydistutils.cfg
    ```
 
-To get the IGRF12 development version, `git clone` and then:
+To get the IGRF13 development version, `git clone` and then:
 ```sh
 python -m pip install -e .
 ```
@@ -59,9 +59,9 @@ igrf12
 
 using as a Python module at geodetic coordinates 65N, 148W:
 ```python
-import igrf12
+import igrf13
 
-mag = igrf12.igrf('2010-07-12', glat=65, glon=-148, alt_km=100)
+mag = igrf13.igrf('2010-07-12', glat=65, glon=-148, alt_km=100)
 ```
 returns an `xarray.Dataset`:
 ```
@@ -81,6 +81,7 @@ Data variables:
 The IGRF model may be specified with the `igrf12.igrf(model=)` option:
 * `11`: IGRF11
 * `12`: IGRF12
+* `13`: IGRF13
 
 ### Matlab
 Matlab can seamlessly call Python modules, as in `igrf12.m`.
@@ -101,6 +102,7 @@ cmake --build build --parallel
 ### References
 
 -   [IGRF12 Fortran code](http://www.ngdc.noaa.gov/IAGA/vmod/igrf12.f)
+-   [IGRF13 Fortran code](http://www.ngdc.noaa.gov/IAGA/vmod/igrf13.f)
 -   [IGRF11 Fortran code](http://www.ngdc.noaa.gov/IAGA/vmod/igrf11.f)
 -   WMM2015 [inclination map](https://www.ngdc.noaa.gov/geomag/WMM/data/WMM2015/WMM2015_I_MERC.pdf)
 -   WMM2015 [declination map](https://www.ngdc.noaa.gov/geomag/WMM/data/WMM2015/WMM2015_D_MERC.pdf)

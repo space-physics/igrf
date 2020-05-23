@@ -3,8 +3,8 @@ from matplotlib.pyplot import show
 import datetime
 import xarray
 from argparse import ArgumentParser
-import igrf12
-import igrf12.plots as plt
+import igrf13
+import igrf13.plots as plt
 
 
 def main():
@@ -26,14 +26,14 @@ def main():
 
     # do world-wide grid if no user input
     if not P.altkm or not P.latlon:
-        glat, glon = igrf12.latlonworldgrid()
+        glat, glon = igrf13.latlonworldgrid()
     elif P.altkm and P.latlon:
         glat, glon = P.latlon
     else:
         raise ValueError("please input all 3 of lat,lon,alt or none of them")
 
-    mag12: xarray.Dataset = igrf12.gridigrf12(P.date, glat, glon, P.altkm, P.isv, P.itype)
-    #   mag11 = igrf12.testigrf11(p.date,glat,glon,p.altkm, p.isv, p.itype)
+    mag12: xarray.Dataset = igrf13.gridigrf13(P.date, glat, glon, P.altkm, P.isv, P.itype)
+    #   mag11 = igrf13.testigrf11(p.date,glat,glon,p.altkm, p.isv, p.itype)
 
     if glat.ndim == 2:
         plt.plotigrf(mag12, "12")
