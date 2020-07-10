@@ -4,56 +4,54 @@ on:
   push:
     paths:
     - "**.py"
-  pull_request:
-    paths:
-    - "**.py"
 
 jobs:
 
   linux:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-python@v1
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
       with:
         python-version: '3.x'
-    - run: sudo apt install -yq gfortran
+
     - run: pip install .[tests,lint]
+
     - run: flake8
     - run: mypy .
+
     - run: pytest
-      working-directory: tests
-      env:
-        FC: gfortran
-        CC: gcc
+
 
   macos:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-python@v1
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
       with:
         python-version: '3.x'
+
     - run: brew install gcc
+
     - run: pip install .[tests]
-    - run: pytest
-      working-directory: tests
       env:
         FC: gfortran-9
         CC: gcc-9
 
+    - run: pytest
+
+
   windows:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v1
-    - uses: actions/setup-python@v1
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
       with:
-        python-version: '3.7'
+        python-version: '3.x'
+
     - run: echo "[build]`ncompiler=mingw32" | Out-File -Encoding ASCII ~/pydistutils.cfg
       shell: powershell
+
     - run: pip install .[tests]
+
     - run: pytest
-      working-directory: tests
-      env:
-        FC: gfortran
-        CC: gcc

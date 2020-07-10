@@ -67,7 +67,10 @@ def plotdiff1112(mag12: xarray.Dataset, mag11: xarray.Dataset):
     for i in ("x", "y", "z"):
         fg = figure()
         ax = fg.gca()
-        hi = ax.imshow(mag12[i] - mag11[i], extent=(mag12.glon[0], mag12.glon[-1], mag12.glat[0], mag12.glat[-1]))
+        hi = ax.imshow(
+            mag12[i] - mag11[i],
+            extent=(mag12.glon[0], mag12.glon[-1], mag12.glat[0], mag12.glat[-1]),
+        )
         fg.colorbar(hi, format=sfmt)
         ax.set_ylabel("latitude (deg)")
         ax.set_xlabel("longitude (deg)")
@@ -76,7 +79,10 @@ def plotdiff1112(mag12: xarray.Dataset, mag11: xarray.Dataset):
     if mag12.isv == 0:
         fg = figure()
         ax = fg.gca()
-        hi = ax.imshow(mag12["Btotal"] - mag11["Btotal"], extent=(mag12.glon[0], mag12.glon[-1], mag12.glat[0], mag12.glat[-1]))
+        hi = ax.imshow(
+            mag12["Btotal"] - mag11["Btotal"],
+            extent=(mag12.glon[0], mag12.glon[-1], mag12.glat[0], mag12.glat[-1]),
+        )
         fg.colorbar(hi)
         ax.set_xlabel("latitude (deg)")
         ax.set_ylabel("longitude (deg)")

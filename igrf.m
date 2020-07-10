@@ -1,5 +1,5 @@
-function igrf12()
-%% IGRF12 model from Matlab.
+function igrf()
+%% IGRF model from Matlab.
 % https://www.scivision.dev/matlab-python-user-module-import/
 assert(~verLessThan('matlab', '9.5'), 'Matlab >= R2018b required')
 
@@ -10,7 +10,7 @@ alt_km = 0;
 t = '2015-12-13T10';
 
 
-B = py.igrf12.igrf(t, glat, glon, alt_km);
+B = py.igrf.igrf(t, glat, glon, alt_km);
 
 Bnorth = xarray2mat(B{'north'})
 Beast = xarray2mat(B{'east'})

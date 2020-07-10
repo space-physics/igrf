@@ -1,18 +1,17 @@
+# IGRF {13,12,11} in Python
+
 [![DOI](https://zenodo.org/badge/33064474.svg)](https://zenodo.org/badge/latestdoi/33064474)
+![Actions Status](https://github.com/space-physics/igrf/workflows/ci/badge.svg)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/space-physics/igrf.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/space-physics/igrf/context:python)
 
-[![Actions Status](https://github.com/space-physics/igrf12/workflows/ci/badge.svg)](https://github.com/space-physics/igrf12/actions)
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/space-physics/igrf12.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/space-physics/igrf12/context:python)
+[![Python versions (PyPI)](https://img.shields.io/pypi/pyversions/igrf.svg)](https://pypi.python.org/pypi/igrf)
+[![PyPi Download stats](http://pepy.tech/badge/igrf)](http://pepy.tech/project/igrf)
 
-[![Python versions (PyPI)](https://img.shields.io/pypi/pyversions/igrf12.svg)](https://pypi.python.org/pypi/igrf12)
-[![PyPi Download stats](http://pepy.tech/badge/igrf12)](http://pepy.tech/project/igrf12)
+International Geomagnetic Reference Field: IGRF13, IGRF12 IGRF11...in simple, object-oriented Python &ge; 3.6 or Matlab.
 
-# IGRF 2012 in Python
+![image](src/igrf/tests/incldecl.png)
 
-International Geomagnetic Reference Field IGRF12 and IGRF11...in simple, object-oriented Python &ge; 3.6 or Matlab.
-
-![image](tests/incldecl.png)
-
-![image](tests/vectors.png)
+![image](src/igrf/tests/vectors.png)
 
 ## Install
 
@@ -27,14 +26,15 @@ A Fortran compiler is required, such as `gfortran`:
    echo "[build]`ncompiler=mingw32" | Out-File -Encoding ASCII ~/pydistutils.cfg
    ```
 
-To get the IGRF12 development version, `git clone` and then:
+To get the IGRF Python development version, `git clone` and then:
+
 ```sh
 python -m pip install -e .
 ```
 
 Otherwise, for the latest release from PyPi:
 ```sh
-python -m pip install igrf12
+python -m pip install igrf
 ```
 
 Optionally, test the install with:
@@ -53,17 +53,21 @@ python setup.py build_ext --inplace --compiler=mingw32
 
 ## Example
 To make the plots in this readme:
+
 ```sh
-igrf12
+python RunIGRF.py
 ```
 
 using as a Python module at geodetic coordinates 65N, 148W:
-```python
-import igrf12
 
-mag = igrf12.igrf('2010-07-12', glat=65, glon=-148, alt_km=100)
+```python
+import igrf
+
+mag = igrf.igrf('2010-07-12', glat=65, glon=-148, alt_km=100)
 ```
+
 returns an `xarray.Dataset`:
+
 ```
 <xarray.Dataset>
 Dimensions:  (alt_km: 1)
@@ -78,13 +82,16 @@ Data variables:
     decl     (alt_km) float64 20.29
 ```
 
-The IGRF model may be specified with the `igrf12.igrf(model=)` option:
+The IGRF model may be specified with the `igrf.igrf(model=)` option:
+
 * `11`: IGRF11
 * `12`: IGRF12
+* `13`: IGRF13
 
 ### Matlab
-Matlab can seamlessly call Python modules, as in `igrf12.m`.
-Instead of the $1000 Aerospace Toolbox, use this free IGRF12 for Matlab.
+
+Matlab can seamlessly call Python modules, as in `igrf.m`.
+Instead of the $1000 Aerospace Toolbox, use this free IGRF for Matlab.
 
 ## Reference
 
@@ -100,7 +107,8 @@ cmake --build build --parallel
 
 ### References
 
--   [IGRF12 Fortran code](http://www.ngdc.noaa.gov/IAGA/vmod/igrf12.f)
--   [IGRF11 Fortran code](http://www.ngdc.noaa.gov/IAGA/vmod/igrf11.f)
--   WMM2015 [inclination map](https://www.ngdc.noaa.gov/geomag/WMM/data/WMM2015/WMM2015_I_MERC.pdf)
--   WMM2015 [declination map](https://www.ngdc.noaa.gov/geomag/WMM/data/WMM2015/WMM2015_D_MERC.pdf)
+* [IGRF13 Fortran code](http://www.ngdc.noaa.gov/IAGA/vmod/igrf13.f)
+* [IGRF12 Fortran code](http://www.ngdc.noaa.gov/IAGA/vmod/igrf12.f)
+* [IGRF11 Fortran code](http://www.ngdc.noaa.gov/IAGA/vmod/igrf11.f)
+* WMM2015 [inclination map](https://www.ngdc.noaa.gov/geomag/WMM/data/WMM2015/WMM2015_I_MERC.pdf)
+* WMM2015 [declination map](https://www.ngdc.noaa.gov/geomag/WMM/data/WMM2015/WMM2015_D_MERC.pdf)

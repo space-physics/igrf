@@ -1,15 +1,15 @@
-      PROGRAM IGRF11
+      PROGRAM IGRF12
 C
-C     This is a program for synthesising geomagnetic field values from the 
+C     This is a program for synthesising geomagnetic field values from the
 C     International Geomagnetic Reference Field series of models as agreed
-c     in December 2009 by IAGA Working Group V-MOD. 
-C     It is the 11th generation IGRF, ie the 10th revision. 
-C     The main-field models for 1900.0, 1905.0,..1940.0 and 2010.0 are 
-C     non-definitive, those for 1945.0, 1950.0,...2005.0 are definitive and
-C     the secular-variation model for 2010.0 to 2015.0 is non-definitive.
+c     in December 2014 by IAGA Working Group V-MOD.
+C     It is the 12th generation IGRF, ie the 11th revision.
+C     The main-field models for 1900.0, 1905.0,..1940.0 and 2015.0 are
+C     non-definitive, those for 1945.0, 1950.0,...2010.0 are definitive and
+C     the secular-variation model for 2015.0 to 2020.0 is non-definitive.
 C
 C     Main-field models are to degree and order 10 (ie 120 coefficients)
-C     for 1900.0-1995.0 and to 13 (ie 195 coefficients) for 2000.0 onwards. 
+C     for 1900.0-1995.0 and to 13 (ie 195 coefficients) for 2000.0 onwards.
 C     The predictive secular-variation model is to degree and order 8 (ie 80
 C     coefficients).
 C
@@ -17,30 +17,32 @@ C     Options include values at different locations at different
 C     times (spot), values at same location at one year intervals
 C     (time series), grid of values at one time (grid); geodetic or
 C     geocentric coordinates, latitude & longitude entered as decimal
-C     degrees or degrees & minutes (not in grid), choice of main field 
+C     degrees or degrees & minutes (not in grid), choice of main field
 C     or secular variation or both (grid only).
 C Recent history of code:
-c     Aug 2003: 
+c     Aug 2003:
 c     Adapted from 8th generation version to include new maximum degree for
 c     main-field models for 2000.0 and onwards and use WGS84 spheroid instead
 c     of International Astronomical Union 1966 spheroid as recommended by IAGA
 c     in July 2003. Reference radius remains as 6371.2 km - it is NOT the mean
 c     radius (= 6371.0 km) but 6371.2 km is what is used in determining the
-c     coefficients. 
-c     Dec 2004: 
+c     coefficients.
+c     Dec 2004:
 c     Adapted for 10th generation
-c     Jul 2005: 
+c     Jul 2005:
 c     1995.0 coefficients as published in igrf9coeffs.xls and igrf10coeffs.xls
 c     now used in code - (Kimmo Korhonen spotted 1 nT difference in 11 coefficients)
 c     Dec 2009:
 c     Adapted for 11th generation
+c     Dec 2014:
+c     Adapted for 12th generation
 c
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
       CHARACTER*1 IA
       CHARACTER*11 TYPE
       CHARACTER*20 NAME
       CHARACTER*30 FNM
-      DATA DTMN,DTMX/1900.0,2020.0/
+      DATA DTMN,DTMX/1900.0,2025.0/
 C
 C
       WRITE(6,*)
@@ -49,13 +51,13 @@ C
       WRITE(6,*)'*                                                    *'
       WRITE(6,*)'* A program for the computation of geomagnetic       *'
       WRITE(6,*)'* field elements from the International Geomagnetic  *'
-      WRITE(6,*)'* Reference Field (11th generation) as revised in    *'
-      WRITE(6,*)'* December 2009 by the IAGA Working Group V-MOD.     *'
+      WRITE(6,*)'* Reference Field (12th generation) as revised in    *'
+      WRITE(6,*)'* December 2014 by the IAGA Working Group V-MOD.     *'
       WRITE(6,*)'*                                                    *'
-      WRITE(6,*)'* It is valid for dates from 1900.0 to 2015.0,       *'
-      WRITE(6,*)'* values up to 2020.0 will be computed but with      *'
+      WRITE(6,*)'* It is valid for dates from 1900.0 to 2020.0,       *'
+      WRITE(6,*)'* values up to 2025.0 will be computed but with      *'
       WRITE(6,*)'* reduced accuracy. Values for dates before 1945.0   *'
-      WRITE(6,*)'* and after 2005.0 are non-definitive, otherwise the *'
+      WRITE(6,*)'* and after 2010.0 are non-definitive, otherwise the *'
       WRITE(6,*)'* values are definitive.                             *'
       WRITE(6,*)'*                                                    *'
       WRITE(6,*)'* Susan Macmillan          British Geological Survey *'
@@ -100,9 +102,9 @@ C
       IF (IDM.LT.1.OR.IDM.GT.2) GO TO 30
       IF (NCOUNT.EQ.0) GOTO 50
 C
-   40 WRITE(6,*) 
+   40 WRITE(6,*)
      1'Do you want values for another date & position? (y/n)'
-      READ (5,'(A1)') IA    
+      READ (5,'(A1)') IA
       IF (IA.NE.'Y'.AND.IA.NE.'y'.AND.IA.NE.'N'.AND.IA.NE.'n')
      1     GO TO 40
       IF(IA.EQ.'N'.OR.IA.EQ.'n') THEN
@@ -134,7 +136,7 @@ C
 
       IF(ITYPE.EQ.1) THEN
        WRITE(6,*) 'Enter altitude in km'
-      ELSE  
+      ELSE
        WRITE(6,*) 'Enter radial distance in km (>3485 km)'
       END IF
       READ (5,*) ALT
@@ -144,7 +146,7 @@ C
        WRITE(6,*) 'Enter latitude & longitude in degrees & minutes'
        WRITE(6,*) '(if either latitude or longitude is between -1'
        WRITE(6,*) 'and 0 degrees, enter the minutes as negative).'
-       WRITE(6,*) 'Enter 4 integers' 
+       WRITE(6,*) 'Enter 4 integers'
        READ (5,*) LTD,LTM,LND,LNM
        IF (LTD.LT.-90.OR.LTD.GT.90.OR.LTM.LE.-60.OR.LTM.GE.60) GO TO 204
        IF (LND.LT.-360.OR.LND.GT.360.OR.LNM.LE.-60.OR.LNM.GE.60)
@@ -167,14 +169,14 @@ C
       IF (XLN.LE.-360.0.OR.XLN.GE.360.0) GO TO 205
       IF (IOPT.EQ.2) GOTO 60
 C
-      CALL IGRF11SYN (0,DATE,ITYPE,ALT,CLT,XLN,X,Y,Z,F)
+      CALL IGRF12SYN (0,DATE,ITYPE,ALT,CLT,XLN,X,Y,Z,F)
       D = FACT*ATAN2(Y,X)
       H = SQRT(X*X + Y*Y)
       S = FACT*ATAN2(Z,H)
       CALL DDECDM (D,IDEC,IDECM)
       CALL DDECDM (S,INC,INCM)
 C
-      CALL IGRF11SYN (1,DATE,ITYPE,ALT,CLT,XLN,DX,DY,DZ,F1)
+      CALL IGRF12SYN (1,DATE,ITYPE,ALT,CLT,XLN,DX,DY,DZ,F1)
       DD = (60.0*FACT*(X*DY - Y*DX))/(H*H)
       DH = (X*DX + Y*DY)/H
       DS = (60.0*FACT*(H*DZ - Z*DH))/(F*F)
@@ -236,11 +238,11 @@ C
       ENDIF
       WRITE (IU,934)
   934 FORMAT (3X,'DATE',7X,'D',3X,'SV',6X,'I',2X,'SV',6X,'H',4X,'SV',
-     17X,'X',4X,'SV',7X,'Y',4X,'SV',7X,'Z',4X,'SV',6X,'F',4X,'SV')
+     1 7X,'X',4X,'SV',7X,'Y',4X,'SV',7X,'Z',4X,'SV',6X,'F',4X,'SV')
       IMX = DTMX - DTMN - 5
       DO 70 I = 1,IMX
       DATE = DTMN - 0.5 + I
-      CALL IGRF11SYN (0,DATE,ITYPE,ALT,CLT,XLN,X,Y,Z,F)
+      CALL IGRF12SYN (0,DATE,ITYPE,ALT,CLT,XLN,X,Y,Z,F)
       D = FACT*ATAN2(Y,X)
       H = SQRT(X*X + Y*Y)
       S = FACT*ATAN2(Z,H)
@@ -250,7 +252,7 @@ C
       IZ = NINT(Z)
       NF = NINT(F)
 C
-      CALL IGRF11SYN (1,DATE,ITYPE,ALT,CLT,XLN,DX,DY,DZ,F1)
+      CALL IGRF12SYN (1,DATE,ITYPE,ALT,CLT,XLN,DX,DY,DZ,F1)
       DD = (60.0*FACT*(X*DY - Y*DX))/(H*H)
       DH = (X*DX + Y*DY)/H
       DS = (60.0*FACT*(H*DZ - Z*DH))/(F*F)
@@ -322,7 +324,7 @@ C
       XLN = 0.001*XLN
       IF (XLN.LE.-360.0) XLN = XLN + 360.0
       IF (XLN.GE.360.0) XLN = XLN - 360.0
-      CALL IGRF11SYN (0,DATE,ITYPE,ALT,CLT,XLN,X,Y,Z,F)
+      CALL IGRF12SYN (0,DATE,ITYPE,ALT,CLT,XLN,X,Y,Z,F)
       D = FACT*ATAN2(Y,X)
       H = SQRT(X*X + Y*Y)
       S = FACT*ATAN2(Z,H)
@@ -332,7 +334,7 @@ C
       IZ = NINT(Z)
       NF = NINT(F)
       IF (IFL.EQ.0) GOTO 153
-      CALL IGRF11SYN (1,DATE,ITYPE,ALT,CLT,XLN,DX,DY,DZ,F1)
+      CALL IGRF12SYN (1,DATE,ITYPE,ALT,CLT,XLN,DX,DY,DZ,F1)
       IDX = NINT(DX)
       IDY = NINT(DY)
       IDZ = NINT(DZ)
@@ -351,7 +353,7 @@ C
       IF (IFL.EQ.2) THEN
        WRITE(IU,959) XLT,XLN,D,S,IH,IX,IY,IZ,NF
        WRITE(IU,961) IDD,IDS,IDH,IDX,IDY,IDZ,IDF
-      ENDIF      
+      ENDIF
   959 FORMAT (2F9.3,2F8.2,5I8)
   960 FORMAT (2F9.3,7I8)
   961 FORMAT (14X,'SV: ',7I8)
@@ -448,7 +450,7 @@ C
 C
       SUBROUTINE DDECDM (X,I,M)
       IMPLICIT DOUBLE PRECISION (A-H,O-Z)
-      SIG = SIGN(1.1d0,X)
+      SIG = SIGN(1.1D0,X)
       DR = ABS(X)
       I = INT(DR)
       T = I
@@ -465,5 +467,3 @@ C
       ENDIF
       RETURN
       END
-
-

@@ -62,7 +62,7 @@ def datetime2yeardec(time: typing.Union[str, datetime.datetime, datetime.date]) 
     elif isinstance(time, (tuple, list, np.ndarray)):
         return np.asarray([datetime2yeardec(t) for t in time])
     else:
-        raise TypeError('unknown input type {}'.format(type(time)))
+        raise TypeError("unknown input type {}".format(type(time)))
 
     year = t.year
 

@@ -1,21 +1,17 @@
-from typing import Union
 import xarray
 from datetime import datetime, date
-import igrf12fort
 import numpy as np
+
 from .utils import latlon2colat, mag_vector2incl_decl, datetime2yeardec
 
-try:
-    import igrf11fort
-except ImportError:
-    igrf11fort = None
+import igrf13fort  # Fortran f2py module
 
 
-def gridigrf12(
+def grid(
     t: datetime,
-    glat: Union[np.ndarray, float],
-    glon: Union[np.ndarray, float],
-    alt_km: Union[np.ndarray, float],
+    glat: np.ndarray,
+    glon: np.ndarray,
+    alt_km: np.ndarray,
     isv: int = 0,
     itype: int = 1,
 ) -> xarray.Dataset:
@@ -32,7 +28,7 @@ def gridigrf12(
     f = np.empty_like(x)
 
     for i, (clt, eln) in enumerate(zip(colat, elon)):
-        x[i], y[i], z[i], f[i] = igrf12fort.igrf12syn(isv, yeardec, itype, alt_km, clt, eln)
+        x[i], y[i], z[i], f[i] = igrf13fort.igrf13syn(isv, yeardec, itype, alt_km, clt, eln)
     # %% assemble output
     if glat.ndim == 2 and glon.ndim == 2:  # assume meshgrid
         coords = {"glat": glat[:, 0], "glon": glon[0, :]}
@@ -57,12 +53,12 @@ def gridigrf12(
 
 def igrf(
     time: datetime,
-    glat: Union[np.ndarray, float],
-    glon: Union[np.ndarray, float],
-    alt_km: Union[np.ndarray, float],
+    glat: np.ndarray,
+    glon: np.ndarray,
+    alt_km: np.ndarray,
     isv: int = 0,
     itype: int = 1,
-    model: int = 12,
+    model: int = 13,
 ) -> xarray.Dataset:
     """
     date: datetime.date or decimal year yyyy.dddd
@@ -90,15 +86,32 @@ def igrf(
     Bvert = np.empty_like(Bnorth)
     Btotal = np.empty_like(Bnorth)
     for i, a in enumerate(alt_km):
-        if model == 12:
-            Bnorth[i], Beast[i], Bvert[i], Btotal[i] = igrf12fort.igrf12syn(isv, yeardec, itype, a, colat, elon)
+        if model == 13:
+            Bnorth[i], Beast[i], Bvert[i], Btotal[i] = igrf13fort.igrf13syn(
+                isv, yeardec, itype, a, colat, elon
+            )
+        elif model == 12:
+            import igrf12fort
+
+            Bnorth[i], Beast[i], Bvert[i], Btotal[i] = igrf12fort.igrf12syn(
+                isv, yeardec, itype, a, colat, elon
+            )
         elif model == 11:
-            Bnorth[i], Beast[i], Bvert[i], Btotal[i] = igrf11fort.igrf11syn(isv, yeardec, itype, a, colat, elon)
+            import igrf11fort
+
+            Bnorth[i], Beast[i], Bvert[i], Btotal[i] = igrf11fort.igrf11syn(
+                isv, yeardec, itype, a, colat, elon
+            )
         else:
             raise ValueError(f"unknown IGRF model {model}")
     # %% assemble output
     mag = xarray.Dataset(
-        {"north": ("alt_km", Bnorth), "east": ("alt_km", Beast), "down": ("alt_km", Bvert), "total": ("alt_km", Btotal)},
+        {
+            "north": ("alt_km", Bnorth),
+            "east": ("alt_km", Beast),
+            "down": ("alt_km", Bvert),
+            "total": ("alt_km", Btotal),
+        },
         coords={"alt_km": alt_km},
     )
 
