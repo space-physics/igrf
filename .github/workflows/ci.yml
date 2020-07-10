@@ -4,6 +4,7 @@ on:
   push:
     paths:
     - "**.py"
+    - .github/workflows/ci.yml
 
 jobs:
 
@@ -15,7 +16,11 @@ jobs:
       with:
         python-version: '3.x'
 
-    - run: pip install .[tests,lint]
+    - run: |
+        sudo apt update -yq
+        sudo apt install -yq --no-install-recommends gfortran
+        pip install .[tests,lint]
+# f2py can't detect gfortran-9 default
 
     - run: flake8
     - run: mypy .
@@ -52,6 +57,6 @@ jobs:
     - run: echo "[build]`ncompiler=mingw32" | Out-File -Encoding ASCII ~/pydistutils.cfg
       shell: powershell
 
-    - run: pip install .[tests]
+    - run: pip install -e .[tests]
 
     - run: pytest
