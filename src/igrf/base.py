@@ -1,19 +1,25 @@
 import xarray
 from datetime import datetime, date
 import numpy as np
+import subprocess
+import shutil
+import typing as T
+from pathlib import Path
+import f90nml
 
 from .utils import latlon2colat, mag_vector2incl_decl, datetime2yeardec
 
-import igrf13fort  # Fortran f2py module
+Rs = Path(__file__).resolve().parents[2]
+exe = shutil.which("igrf_run", path=str(Rs))
+if not exe:
+    subprocess.check_call(["ctest", "-S", str(Rs / "setup.cmake"), "-VV"])
+exe = shutil.which("igrf_run", path=str(Rs / "build"))
+if not exe:
+    raise ImportError("could not find IGRF driver, was it built?")
 
 
 def grid(
-    t: datetime,
-    glat: np.ndarray,
-    glon: np.ndarray,
-    alt_km: np.ndarray,
-    isv: int = 0,
-    itype: int = 1,
+    t: datetime, glat: np.ndarray, glon: np.ndarray, alt_km: np.ndarray, model: int = 13
 ) -> xarray.Dataset:
 
     glat = np.atleast_1d(glat)
@@ -27,8 +33,7 @@ def grid(
     z = np.empty_like(x)
     f = np.empty_like(x)
 
-    for i, (clt, eln) in enumerate(zip(colat, elon)):
-        x[i], y[i], z[i], f[i] = igrf13fort.igrf13syn(isv, yeardec, itype, alt_km, clt, eln)
+    x, y, z, f = igrf_run(model, yeardec, alt_km, colat, elon)
     # %% assemble output
     if glat.ndim == 2 and glon.ndim == 2:  # assume meshgrid
         coords = {"glat": glat[:, 0], "glon": glon[0, :]}
@@ -51,14 +56,20 @@ def grid(
     return mag
 
 
+def igrf_run(
+    model: int, yeardec: float, alt_km: float, colat: float, eastlon: float
+) -> T.Dict[str, T.Any]:
+
+    nml = f90nml.namelist.Namelist({"date": yeardec, "alt": alt_km, "clt": colat, "xln": eastlon})
+    nml.write("in.nml", force=True)
+
+    subprocess.check_call([str(exe), "in.nml", "out.nml"])
+
+    return f90nml.read("out.nml").todict()
+
+
 def igrf(
-    time: datetime,
-    glat: np.ndarray,
-    glon: np.ndarray,
-    alt_km: np.ndarray,
-    isv: int = 0,
-    itype: int = 1,
-    model: int = 13,
+    time: datetime, glat: np.ndarray, glon: np.ndarray, alt_km: np.ndarray, model: int = 13,
 ) -> xarray.Dataset:
     """
     date: datetime.date or decimal year yyyy.dddd
@@ -86,24 +97,8 @@ def igrf(
     Bvert = np.empty_like(Bnorth)
     Btotal = np.empty_like(Bnorth)
     for i, a in enumerate(alt_km):
-        if model == 13:
-            Bnorth[i], Beast[i], Bvert[i], Btotal[i] = igrf13fort.igrf13syn(
-                isv, yeardec, itype, a, colat, elon
-            )
-        elif model == 12:
-            import igrf12fort
+        Bnorth[i], Beast[i], Bvert[i], Btotal[i] = igrf_run(model, yeardec, a, colat, elon)
 
-            Bnorth[i], Beast[i], Bvert[i], Btotal[i] = igrf12fort.igrf12syn(
-                isv, yeardec, itype, a, colat, elon
-            )
-        elif model == 11:
-            import igrf11fort
-
-            Bnorth[i], Beast[i], Bvert[i], Btotal[i] = igrf11fort.igrf11syn(
-                isv, yeardec, itype, a, colat, elon
-            )
-        else:
-            raise ValueError(f"unknown IGRF model {model}")
     # %% assemble output
     mag = xarray.Dataset(
         {

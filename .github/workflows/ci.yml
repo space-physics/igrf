@@ -54,9 +54,15 @@ jobs:
       with:
         python-version: '3.x'
 
-    - run: echo "[build]`ncompiler=mingw32" | Out-File -Encoding ASCII ~/pydistutils.cfg
-      shell: powershell
+    # github actions issue -- make file driver replacement.
+    # - run: echo "[build]`ncompiler=mingw32" | Out-File -Encoding ASCII ~/pydistutils.cfg
+    #   shell: powershell
 
-    - run: pip install -e .[tests]
+    # - run: pip install -e .[tests]
 
-    - run: pytest
+    # - run: pytest
+
+    - run: cinst -y ninja
+    - run: ctest -S setup.cmake -V
+      env:
+        FC: gfortran
