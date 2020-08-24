@@ -1,11 +1,16 @@
 #!/usr/bin/env python
-from matplotlib.pyplot import show
 import datetime
 from argparse import ArgumentParser
 import numpy as np
 
 import igrf
-import igrf.plots as plt
+
+
+try:
+    import igrf.plots as plt
+    from matplotlib.pyplot import show
+except ImportError:
+    show = plt = None
 
 
 def cli():
@@ -37,9 +42,8 @@ def cli():
     else:
         raise ValueError("please input all 3 of lat,lon,alt or none of them")
 
-    if isinstance(glat, np.ndarray) and glat.ndim == 2:
+    if show is not None and isinstance(glat, np.ndarray) and glat.ndim == 2:
         plt.plotigrf(mag, "13")
+        show()
     else:
         print(mag)
-
-    show()
