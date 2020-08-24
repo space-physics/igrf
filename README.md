@@ -20,11 +20,6 @@ A Fortran compiler is required, such as `gfortran`:
 * Linux: `apt install gfortran`
 * Mac: `brew install gcc`
 * [gfortran for Windows](https://www.scivision.dev/windows-gcc-gfortran-cmake-make-install/) (MinGW)
-   Windows only: from Powershell:
-
-   ```posh
-   echo "[build]`ncompiler=mingw32" | Out-File -Encoding ASCII ~/pydistutils.cfg
-   ```
 
 To get the IGRF Python development version, `git clone` and then:
 
