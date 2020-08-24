@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 import setuptools  # noqa: F401
 from numpy.distutils.core import setup, Extension
+import site
+
+# PEP517 workaround
+site.ENABLE_USER_SITE = True
 
 igrf13 = Extension(
     name="igrf13fort",

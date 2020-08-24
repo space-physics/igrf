@@ -1,21 +1,19 @@
-function igrf()
+function B = igrf(time, glat, glon, alt_km)
 %% IGRF model from Matlab.
+arguments
+  time (1,1) datetime
+  glat (1,1) {mustBeNumeric,mustBeFinite}
+  glon (1,1) {mustBeNumeric,mustBeFinite}
+  alt_km (1,1) {mustBeNumeric,mustBeFinite}
+end
 % https://www.scivision.dev/matlab-python-user-module-import/
-assert(~verLessThan('matlab', '9.5'), 'Matlab >= R2018b required')
 
-% geographic WGS84 lat,lon,alt
-glat = 65.1;
-glon = -147.5;
-alt_km = 0;
-t = '2015-12-13T10';
+dat = py.igrf.igrf(time, glat, glon, alt_km);
 
-
-B = py.igrf.igrf(t, glat, glon, alt_km);
-
-Bnorth = xarray2mat(B{'north'})
-Beast = xarray2mat(B{'east'})
-Bdown = xarray2mat(B{'down'})
-Btotal = xarray2mat(B{'total'})
+B.north = xarray2mat(dat{'north'});
+B.east = xarray2mat(dat{'east'});
+B.down = xarray2mat(dat{'down'});
+B.total = xarray2mat(dat{'total'});
 
 end
 
