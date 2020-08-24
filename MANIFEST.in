@@ -1,0 +1,2 @@
+include src/igrf/fortran/igrf13_driver.f90 src/igrf/fortran/igrf13.f
+include src/igrf/CMakeLists.txt src/igrf/setup.cmake

@@ -1,4 +1,4 @@
-# IGRF {13,12,11} in Python
+# IGRF 13 in Python
 
 [![DOI](https://zenodo.org/badge/33064474.svg)](https://zenodo.org/badge/latestdoi/33064474)
 ![Actions Status](https://github.com/space-physics/igrf/workflows/ci/badge.svg)
@@ -7,7 +7,7 @@
 [![Python versions (PyPI)](https://img.shields.io/pypi/pyversions/igrf.svg)](https://pypi.python.org/pypi/igrf)
 [![PyPi Download stats](http://pepy.tech/badge/igrf)](http://pepy.tech/project/igrf)
 
-International Geomagnetic Reference Field: IGRF13, IGRF12 IGRF11...in simple, object-oriented Python &ge; 3.6 or Matlab.
+International Geomagnetic Reference Field: IGRF13 in object-oriented Python or Matlab.
 
 ![image](src/igrf/tests/incldecl.png)
 
@@ -42,20 +42,12 @@ Optionally, test the install with:
 pytest
 ```
 
-### Windows
-If you get ImportError on Windows for the Fortran module, try from the `iri2016` directory:
-
-```posh
-del *.pyd
-python setup.py build_ext --inplace --compiler=mingw32
-```
-
-
 ## Example
+
 To make the plots in this readme:
 
 ```sh
-python RunIGRF.py
+igrf
 ```
 
 using as a Python module at geodetic coordinates 65N, 148W:
@@ -82,12 +74,6 @@ Data variables:
     decl     (alt_km) float64 20.29
 ```
 
-The IGRF model may be specified with the `igrf.igrf(model=)` option:
-
-* `11`: IGRF11
-* `12`: IGRF12
-* `13`: IGRF13
-
 ### Matlab
 
 Matlab can seamlessly call Python modules, as used in [igrf.m](./+igrf/igrf.m).
@@ -97,17 +83,7 @@ Instead of the $1000 Aerospace Toolbox, use this free IGRF for Matlab like:
 igrf.igrf(datetime(2020,1,3,5,4,22), 20, 60, 0)
 ```
 
-## Reference
-
-If you only want the plain Fortran program, you can do:
-
-```sh
-cmake -B build
-
-cmake --build build --parallel
-
-./testigrf
-```
+You may find it helpful to run "setup.m" first to setup the library paths.
 
 ### References
 

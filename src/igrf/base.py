@@ -1,10 +1,37 @@
 import xarray
 from datetime import datetime
 import numpy as np
+import subprocess
+import shutil
+import os
+from pathlib import Path
+import importlib.resources
 
-from .utils import latlon2colat, mag_vector2incl_decl, datetime2yeardec
+from .utils import mag_vector2incl_decl, datetime2yeardec
 
-import importlib
+
+def cmake(setup_file: Path):
+    """
+    attempt to build using CMake
+    """
+    exe = shutil.which("ctest")
+    if not exe:
+        raise FileNotFoundError("CMake not available")
+
+    subprocess.check_call([exe, "-S", str(setup_file), "-VV"])
+
+
+def build_exe(exe_name: str) -> str:
+    # build on run
+    if os.name == "nt":
+        exe_name += ".exe"
+    if not importlib.resources.is_resource(__package__, exe_name):
+        with importlib.resources.path(__package__, "setup.cmake") as setup_file:
+            cmake(setup_file)
+    if not importlib.resources.is_resource(__package__, exe_name):
+        raise ModuleNotFoundError("could not build MSISE00 Fortran driver")
+
+    return exe_name
 
 
 def grid(
@@ -15,25 +42,29 @@ def grid(
     *,
     isv: int = 0,
     itype: int = 1,
-    model: int = 13,
 ) -> xarray.Dataset:
-
-    igrf_fort = importlib.import_module(f"igrf{model}fort")
-    igrf_f2py = getattr(igrf_fort, f"igrf{model}syn")
 
     glat = np.atleast_1d(glat)
     glon = np.atleast_1d(glon)
 
     yeardec = datetime2yeardec(t)
-    colat, elon = latlon2colat(glat.ravel(), glon.ravel())
 
-    x = np.empty(colat.size)
+    x = np.empty(glat.size)
     y = np.empty_like(x)
     z = np.empty_like(x)
     f = np.empty_like(x)
 
-    for i, (clt, eln) in enumerate(zip(colat, elon)):
-        x[i], y[i], z[i], f[i] = igrf_f2py(isv, yeardec, itype, alt_km, clt, eln)
+    with importlib.resources.path(__package__, build_exe("igrf13_driver")) as exe:
+        for i, (la, lo) in enumerate(zip(glat, glon)):
+            cmd = [str(exe), str(yeardec), str(la), str(lo), str(alt_km), str(isv), str(itype)]
+            ret = subprocess.run(
+                cmd, universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            )
+            if ret.returncode != 0:
+                raise RuntimeError(f"IGRF13 error code {ret.returncode}\n{ret.stderr}")
+            # different compilers throw in extra \n
+            x[i], y[i], z[i], f[i] = list(map(float, ret.stdout.split()))
+
     # %% assemble output
     if glat.ndim == 2 and glon.ndim == 2:  # assume meshgrid
         coords = {"glat": glat[:, 0], "glon": glon[0, :]}
@@ -42,7 +73,7 @@ def grid(
     else:
         raise ValueError(f"glat/glon shapes: {glat.shape} {glon.shape}")
 
-    mag = xarray.Dataset(coords=coords, attrs={"time": t, "isv": isv, "itype": itype, "model": 13})
+    mag = xarray.Dataset(coords=coords, attrs={"time": t, "isv": isv, "itype": itype})
     mag["north"] = (("glat", "glon"), x.reshape(glat.shape))
     mag["east"] = (("glat", "glon"), y.reshape(glat.shape))
     mag["down"] = (("glat", "glon"), z.reshape(glat.shape))
@@ -57,14 +88,7 @@ def grid(
 
 
 def igrf(
-    time: datetime,
-    glat: float,
-    glon: float,
-    alt_km: np.ndarray,
-    *,
-    isv: int = 0,
-    itype: int = 1,
-    model: int = 13,
+    time: datetime, glat: float, glon: float, alt_km: np.ndarray, *, isv: int = 0, itype: int = 1,
 ) -> xarray.Dataset:
     """
 
@@ -78,15 +102,8 @@ def igrf(
     itype: 1: altitude is above sea level
     """
 
-    igrf_fort = importlib.import_module(f"igrf{model}fort")
-    igrf_f2py = getattr(igrf_fort, f"igrf{model}syn")
-
     # decimal year
     yeardec = datetime2yeardec(time)
-
-    colat, elon = latlon2colat(glat, glon)
-
-    assert colat.size == elon.size == 1
 
     alt_km = np.atleast_1d(alt_km)
     Bnorth = np.empty(alt_km.size)
@@ -94,8 +111,17 @@ def igrf(
     Bvert = np.empty_like(Bnorth)
     Btotal = np.empty_like(Bnorth)
 
-    for i, a in enumerate(alt_km):
-        Bnorth[i], Beast[i], Bvert[i], Btotal[i] = igrf_f2py(isv, yeardec, itype, a, colat, elon)
+    with importlib.resources.path(__package__, build_exe("igrf13_driver")) as exe:
+        for i, a in enumerate(alt_km):
+            cmd = [str(exe), str(yeardec), str(glat), str(glon), str(a), str(isv), str(itype)]
+            ret = subprocess.run(
+                cmd, universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+            )
+            if ret.returncode != 0:
+                raise RuntimeError(f"IGRF13 error code {ret.returncode}\n{ret.stderr}")
+            # different compilers throw in extra \n
+
+            Bnorth[i], Beast[i], Bvert[i], Btotal[i] = list(map(float, ret.stdout.split()))
 
     # %% assemble output
     mag = xarray.Dataset(
@@ -106,14 +132,7 @@ def igrf(
             "total": ("alt_km", Btotal),
         },
         coords={"alt_km": alt_km},
-        attrs={
-            "time": time,
-            "isv": isv,
-            "itype": itype,
-            "model": model,
-            "glat": glat,
-            "glon": glon,
-        },
+        attrs={"time": time, "isv": isv, "itype": itype, "glat": glat, "glon": glon},
     )
 
     decl, incl = mag_vector2incl_decl(mag.north, mag.east, mag.down)

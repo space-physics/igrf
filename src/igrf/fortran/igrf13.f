@@ -1,4 +1,9 @@
+      module igrf
+
+      contains
+
       subroutine igrf13syn (isv,date,itype,alt,colat,elong,x,y,z,f)
+      use, intrinsic :: iso_fortran_env, only : stderr=>error_unit
 c
 c     This is a synthesis routine for the 13th generation IGRF as agreed
 c     in December 2019 by IAGA Working Group V-MOD. It is valid 1900.0 to
@@ -42,6 +47,7 @@ c
       implicit double precision (a-h,o-z)
       intent(in)  :: isv,date,itype,alt,colat,elong
       intent(out) :: x,y,z,f
+      integer :: isv, itype
 
       dimension gh(3645),g0(120),g1(120),g2(120),g3(120),g4(120),
      1          g5(120),g6(120),g7(120),g8(120),g9(120),ga(120),
@@ -539,8 +545,8 @@ c
       x     = 0.0
       y     = 0.0
       z     = 0.0
-      if (date.lt.1900.0.or.date.gt.2030.0) go to 11
-      if (date.gt.2025.0) write (6,960) date
+      if (date.lt.1900.0.or.date.gt.2030.0) goto 11
+      if (date.gt.2025.0) write(stderr,960) date
   960 format (/' This version of the IGRF is intended for use up',
      1        ' to 2025.0.'/' values for',f9.3,' will be computed',
      2        ' but may be of reduced accuracy'/)
@@ -684,9 +690,12 @@ c
 c     error return if date out of bounds
 c
    11 f     = 1.0d8
-      write (6,961) date
+      write(stderr,961) date
   961 format (/' This subroutine will not work with a date of',
      1        f9.3,'.  Date must be in the range 1900.0.ge.date',
      2        '.le.2030.0. On return f = 1.0d8., x = y = z = 0.')
-      return
-      end
+      error stop
+
+      end subroutine igrf13syn
+
+      end module igrf
