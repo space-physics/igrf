@@ -34,8 +34,6 @@ jobs:
       with:
         python-version: '3.x'
 
-    - run: brew install gcc
-
     - run: pip install .[tests]
       env:
         FC: gfortran-9
