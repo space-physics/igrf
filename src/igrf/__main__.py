@@ -2,6 +2,7 @@
 from matplotlib.pyplot import show
 import datetime
 from argparse import ArgumentParser
+import numpy as np
 
 import igrf
 import igrf.plots as plt
@@ -24,21 +25,20 @@ def cli():
         default=0,
     )
     p.add_argument("-c", "--latlon", help="geodetic latitude, longitude (deg)", type=float, nargs=2)
-    p.add_argument("-model", help="IGRF model version", choices=[11, 12, 13], default=13, type=int)
     P = p.parse_args()
 
     # do world-wide grid if no user input
     if not P.altkm or not P.latlon:
         glat, glon = igrf.utils.latlonworldgrid()
-        mag = igrf.grid(P.date, glat, glon, P.altkm, isv=P.isv, itype=P.itype, model=P.model)
+        mag = igrf.grid(P.date, glat, glon, P.altkm, isv=P.isv, itype=P.itype)
     elif P.altkm and P.latlon:
         glat, glon = P.latlon
-        mag = igrf.igrf(P.date, glat, glon, P.altkm, isv=P.isv, itype=P.itype, model=P.model)
+        mag = igrf.igrf(P.date, glat, glon, P.altkm, isv=P.isv, itype=P.itype)
     else:
         raise ValueError("please input all 3 of lat,lon,alt or none of them")
 
-    if glat.ndim == 2:
-        plt.plotigrf(mag, "12")
+    if isinstance(glat, np.ndarray) and glat.ndim == 2:
+        plt.plotigrf(mag, "13")
     else:
         print(mag)
 

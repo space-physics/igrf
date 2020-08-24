@@ -1,5 +1,6 @@
 import pytest
 from pytest import approx
+import subprocess
 
 import igrf
 
@@ -14,7 +15,6 @@ def test_bad_date():
 def test_igrf13():
 
     mag = igrf.igrf(time, 65, 85, 0)
-
     assert mag.north.item() == approx(9295.415460)
     assert mag.east.item() == approx(2559.7889298)
     assert mag.down.item() == approx(59670.379598)
@@ -22,6 +22,10 @@ def test_igrf13():
 
     assert mag.incl.item() == approx(80.821575)
     assert mag.decl.item() == approx(15.396590)
+
+
+def test_cli():
+    subprocess.check_call(["igrf", time, "-c", "65", "85", "-a", "0"])
 
 
 # def test_igrf12():

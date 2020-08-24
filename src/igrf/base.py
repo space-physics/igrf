@@ -35,7 +35,7 @@ def build_exe(exe_name: str) -> str:
 
 
 def grid(
-    t: datetime,
+    time: datetime,
     glat: np.ndarray,
     glon: np.ndarray,
     alt_km: np.ndarray,
@@ -47,7 +47,7 @@ def grid(
     glat = np.atleast_1d(glat)
     glon = np.atleast_1d(glon)
 
-    yeardec = datetime2yeardec(t)
+    yeardec = datetime2yeardec(time)
 
     x = np.empty(glat.size)
     y = np.empty_like(x)
@@ -55,13 +55,15 @@ def grid(
     f = np.empty_like(x)
 
     with importlib.resources.path(__package__, build_exe("igrf13_driver")) as exe:
-        for i, (la, lo) in enumerate(zip(glat, glon)):
+        for i, (la, lo) in enumerate(zip(glat.ravel(), glon.ravel())):
             cmd = [str(exe), str(yeardec), str(la), str(lo), str(alt_km), str(isv), str(itype)]
             ret = subprocess.run(
                 cmd, universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
             )
             if ret.returncode != 0:
-                raise RuntimeError(f"IGRF13 error code {ret.returncode}\n{ret.stderr}")
+                raise RuntimeError(
+                    f"IGRF13 error code {ret.returncode}\n{ret.stderr}\n{' '.join(cmd)}"
+                )
             # different compilers throw in extra \n
             x[i], y[i], z[i], f[i] = list(map(float, ret.stdout.split()))
 
@@ -73,7 +75,7 @@ def grid(
     else:
         raise ValueError(f"glat/glon shapes: {glat.shape} {glon.shape}")
 
-    mag = xarray.Dataset(coords=coords, attrs={"time": t, "isv": isv, "itype": itype})
+    mag = xarray.Dataset(coords=coords, attrs={"time": time, "isv": isv, "itype": itype})
     mag["north"] = (("glat", "glon"), x.reshape(glat.shape))
     mag["east"] = (("glat", "glon"), y.reshape(glat.shape))
     mag["down"] = (("glat", "glon"), z.reshape(glat.shape))
@@ -118,7 +120,9 @@ def igrf(
                 cmd, universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
             )
             if ret.returncode != 0:
-                raise RuntimeError(f"IGRF13 error code {ret.returncode}\n{ret.stderr}")
+                raise RuntimeError(
+                    f"IGRF13 error code {ret.returncode}\n{ret.stderr}\n{' '.join(cmd)}"
+                )
             # different compilers throw in extra \n
 
             Bnorth[i], Beast[i], Bvert[i], Btotal[i] = list(map(float, ret.stdout.split()))
