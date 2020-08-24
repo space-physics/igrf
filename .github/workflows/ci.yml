@@ -35,12 +35,11 @@ jobs:
         python-version: '3.x'
 
     - run: pip install .[tests]
+
+    - run: pytest
       env:
         FC: gfortran-9
         CC: gcc-9
-
-    - run: pytest
-
 
   windows:
     runs-on: windows-latest
