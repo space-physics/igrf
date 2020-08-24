@@ -90,8 +90,12 @@ The IGRF model may be specified with the `igrf.igrf(model=)` option:
 
 ### Matlab
 
-Matlab can seamlessly call Python modules, as in `igrf.m`.
-Instead of the $1000 Aerospace Toolbox, use this free IGRF for Matlab.
+Matlab can seamlessly call Python modules, as used in [igrf.m](./+igrf/igrf.m).
+Instead of the $1000 Aerospace Toolbox, use this free IGRF for Matlab like:
+
+```matlab
+igrf.igrf(datetime(2020,1,3,5,4,22), 20, 60, 0)
+```
 
 ## Reference
 
