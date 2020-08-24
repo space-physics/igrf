@@ -1,10 +1,10 @@
 import xarray
-from datetime import datetime, date
+from datetime import datetime
 import numpy as np
 
 from .utils import latlon2colat, mag_vector2incl_decl, datetime2yeardec
 
-import igrf13fort  # Fortran f2py module
+import importlib
 
 
 def grid(
@@ -12,9 +12,14 @@ def grid(
     glat: np.ndarray,
     glon: np.ndarray,
     alt_km: np.ndarray,
+    *,
     isv: int = 0,
     itype: int = 1,
+    model: int = 13,
 ) -> xarray.Dataset:
+
+    igrf_fort = importlib.import_module(f"igrf{model}fort")
+    igrf_f2py = getattr(igrf_fort, f"igrf{model}syn")
 
     glat = np.atleast_1d(glat)
     glon = np.atleast_1d(glon)
@@ -28,7 +33,7 @@ def grid(
     f = np.empty_like(x)
 
     for i, (clt, eln) in enumerate(zip(colat, elon)):
-        x[i], y[i], z[i], f[i] = igrf13fort.igrf13syn(isv, yeardec, itype, alt_km, clt, eln)
+        x[i], y[i], z[i], f[i] = igrf_f2py(isv, yeardec, itype, alt_km, clt, eln)
     # %% assemble output
     if glat.ndim == 2 and glon.ndim == 2:  # assume meshgrid
         coords = {"glat": glat[:, 0], "glon": glon[0, :]}
@@ -37,7 +42,7 @@ def grid(
     else:
         raise ValueError(f"glat/glon shapes: {glat.shape} {glon.shape}")
 
-    mag = xarray.Dataset(coords=coords, attrs={"time": t, "isv": isv})
+    mag = xarray.Dataset(coords=coords, attrs={"time": t, "isv": isv, "itype": itype, "model": 13})
     mag["north"] = (("glat", "glon"), x.reshape(glat.shape))
     mag["east"] = (("glat", "glon"), y.reshape(glat.shape))
     mag["down"] = (("glat", "glon"), z.reshape(glat.shape))
@@ -53,14 +58,19 @@ def grid(
 
 def igrf(
     time: datetime,
-    glat: np.ndarray,
-    glon: np.ndarray,
+    glat: float,
+    glon: float,
     alt_km: np.ndarray,
+    *,
     isv: int = 0,
     itype: int = 1,
     model: int = 13,
 ) -> xarray.Dataset:
     """
+
+    Parameters
+    ----------
+
     date: datetime.date or decimal year yyyy.dddd
     glat, glon: geographic Latitude, Longitude
     alt_km: altitude [km] above sea level for itype==1
@@ -68,13 +78,11 @@ def igrf(
     itype: 1: altitude is above sea level
     """
 
+    igrf_fort = importlib.import_module(f"igrf{model}fort")
+    igrf_f2py = getattr(igrf_fort, f"igrf{model}syn")
+
     # decimal year
-    if isinstance(time, (str, date, datetime)):
-        yeardec = datetime2yeardec(time)
-    elif isinstance(time, float):  # assume decimal year
-        yeardec = time
-    else:
-        raise TypeError(f"unknown time format {type(time)}")
+    yeardec = datetime2yeardec(time)
 
     colat, elon = latlon2colat(glat, glon)
 
@@ -85,25 +93,10 @@ def igrf(
     Beast = np.empty_like(Bnorth)
     Bvert = np.empty_like(Bnorth)
     Btotal = np.empty_like(Bnorth)
+
     for i, a in enumerate(alt_km):
-        if model == 13:
-            Bnorth[i], Beast[i], Bvert[i], Btotal[i] = igrf13fort.igrf13syn(
-                isv, yeardec, itype, a, colat, elon
-            )
-        elif model == 12:
-            import igrf12fort
+        Bnorth[i], Beast[i], Bvert[i], Btotal[i] = igrf_f2py(isv, yeardec, itype, a, colat, elon)
 
-            Bnorth[i], Beast[i], Bvert[i], Btotal[i] = igrf12fort.igrf12syn(
-                isv, yeardec, itype, a, colat, elon
-            )
-        elif model == 11:
-            import igrf11fort
-
-            Bnorth[i], Beast[i], Bvert[i], Btotal[i] = igrf11fort.igrf11syn(
-                isv, yeardec, itype, a, colat, elon
-            )
-        else:
-            raise ValueError(f"unknown IGRF model {model}")
     # %% assemble output
     mag = xarray.Dataset(
         {
@@ -113,6 +106,14 @@ def igrf(
             "total": ("alt_km", Btotal),
         },
         coords={"alt_km": alt_km},
+        attrs={
+            "time": time,
+            "isv": isv,
+            "itype": itype,
+            "model": model,
+            "glat": glat,
+            "glon": glon,
+        },
     )
 
     decl, incl = mag_vector2incl_decl(mag.north, mag.east, mag.down)

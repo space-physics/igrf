@@ -53,6 +53,10 @@ def datetime2yeardec(time: typing.Union[str, datetime.datetime, datetime.date]) 
     time distances should be preserved: If bdate-adate=ddate-cdate then
     dt2t(bdate)-dt2t(adate) = dt2t(ddate)-dt2t(cdate)
     """
+
+    if isinstance(time, float):
+        # assume already year_dec
+        return time
     if isinstance(time, str):
         t = parse(time)
     elif isinstance(time, datetime.datetime):
