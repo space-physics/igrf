@@ -8,13 +8,19 @@ set(_opts)
 # --- boilerplate follows
 message(STATUS "CMake ${CMAKE_VERSION}")
 if(CMAKE_VERSION VERSION_LESS 3.13)
-  message(FATAL_ERROR "Please update CMake >= 3.13")
+  message(FATAL_ERROR "Please update CMake >= 3.13.
+    Try 'pip install -U cmake' or https://cmake.org/download/")
 endif()
 
 # site is OS name
 if(NOT DEFINED CTEST_SITE)
   set(CTEST_SITE ${CMAKE_SYSTEM_NAME})
 endif()
+
+# parallel test--use ctest_test(PARALLEL_LEVEL ${Ncpu} as setting CTEST_PARALLEL_LEVEL has no effect
+include(ProcessorCount)
+ProcessorCount(Ncpu)
+message(STATUS "${Ncpu} CPU cores detected")
 
 # test name is Fortran compiler in FC
 # Note: ctest scripts cannot read cache variables like CMAKE_Fortran_COMPILER
@@ -44,11 +50,21 @@ if(NOT DEFINED CTEST_BINARY_DIRECTORY)
 endif()
 
 # CTEST_CMAKE_GENERATOR must be defined in any case here.
-if(NOT DEFINED CTEST_CMAKE_GENERATOR)
+if(NOT DEFINED CTEST_CMAKE_GENERATOR AND CMAKE_VERSION VERSION_GREATER_EQUAL 3.17)
   find_program(_gen NAMES ninja ninja-build samu)
   if(_gen)
-    set(CTEST_CMAKE_GENERATOR "Ninja")
-  elseif(WIN32)
+    execute_process(COMMAND ${_gen} --version
+      OUTPUT_VARIABLE _ninja_version
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      RESULT_VARIABLE _gen_ok
+      TIMEOUT 10)
+    if(_gen_ok EQUAL 0 AND _ninja_version VERSION_GREATER_EQUAL 1.10)
+      set(CTEST_CMAKE_GENERATOR "Ninja")
+    endif()
+  endif(_gen)
+endif()
+if(NOT DEFINED CTEST_CMAKE_GENERATOR)
+  if(WIN32)
     set(CTEST_CMAKE_GENERATOR "MinGW Makefiles")
     set(CTEST_BUILD_FLAGS -j)  # not --parallel as this goes to generator directly
   else()
@@ -67,6 +83,18 @@ ctest_configure(
   RETURN_VALUE return_code
   CAPTURE_CMAKE_ERROR cmake_err)
 
+# if it's a generator or compiler mismatch, delete cache and try again
+if(NOT cmake_err EQUAL 0)
+  file(REMOVE ${CTEST_BINARY_DIRECTORY}/CMakeCache.txt)
+
+  ctest_configure(
+    BUILD ${CTEST_BINARY_DIRECTORY}
+    SOURCE ${CTEST_SOURCE_DIRECTORY}
+    OPTIONS "${_opts}"
+    RETURN_VALUE return_code
+    CAPTURE_CMAKE_ERROR cmake_err)
+endif()
+
 if(return_code EQUAL 0 AND cmake_err EQUAL 0)
   ctest_build(
     BUILD ${CTEST_BINARY_DIRECTORY}
@@ -84,6 +112,7 @@ if(return_code EQUAL 0 AND Nerror EQUAL 0 AND cmake_err EQUAL 0)
   BUILD ${CTEST_BINARY_DIRECTORY}
   RETURN_VALUE return_code
   CAPTURE_CMAKE_ERROR ctest_err
+  PARALLEL_LEVEL ${Ncpu}
   )
 else()
   message(STATUS "SKIP: ctest_test(): returncode: ${return_code}; CMake error code: ${cmake_err}")
