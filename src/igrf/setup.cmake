@@ -7,8 +7,32 @@ set(_opts)
 
 # --- boilerplate follows
 message(STATUS "CMake ${CMAKE_VERSION}")
-if(CMAKE_VERSION VERSION_LESS 3.12)
-  message(FATAL_ERROR "Please update CMake >= 3.12")
+if(CMAKE_VERSION VERSION_LESS 3.15)
+  message(FATAL_ERROR "Please update CMake >= 3.15.
+    Try 'pip install -U cmake' or https://cmake.org/download/")
+endif()
+
+# CTEST_CMAKE_GENERATOR must always be defined
+if(NOT DEFINED CTEST_CMAKE_GENERATOR AND CMAKE_VERSION VERSION_GREATER_EQUAL 3.17)
+  find_program(_gen NAMES ninja ninja-build samu)
+  if(_gen)
+    execute_process(COMMAND ${_gen} --version
+      OUTPUT_VARIABLE _ninja_version
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+      RESULT_VARIABLE _gen_ok
+      TIMEOUT 10)
+    if(_gen_ok EQUAL 0 AND _ninja_version VERSION_GREATER_EQUAL 1.10)
+      set(CTEST_CMAKE_GENERATOR "Ninja")
+    endif()
+  endif(_gen)
+endif()
+if(NOT DEFINED CTEST_CMAKE_GENERATOR)
+  set(CTEST_BUILD_FLAGS -j)  # not --parallel as this goes to generator directly
+  if(WIN32)
+    set(CTEST_CMAKE_GENERATOR "MinGW Makefiles")
+  else()
+    set(CTEST_CMAKE_GENERATOR "Unix Makefiles")
+  endif()
 endif()
 
 # site is OS name
@@ -21,24 +45,6 @@ include(ProcessorCount)
 ProcessorCount(Ncpu)
 message(STATUS "${Ncpu} CPU cores detected")
 
-# test name is Fortran compiler in FC
-# Note: ctest scripts cannot read cache variables like CMAKE_Fortran_COMPILER
-if(DEFINED ENV{FC})
-  set(FC $ENV{FC})
-  set(CTEST_BUILD_NAME ${FC})
-
-  if(NOT DEFINED ENV{CC})
-    # use same compiler for C and Fortran, which CMake might not do itself
-    if(FC STREQUAL ifort)
-      if(WIN32)
-        set(ENV{CC} icl)
-      else()
-        set(ENV{CC} icc)
-      endif()
-    endif()
-  endif()
-endif()
-
 if(NOT DEFINED CTEST_BUILD_CONFIGURATION)
   set(CTEST_BUILD_CONFIGURATION "Release")
 endif()
@@ -46,20 +52,6 @@ endif()
 set(CTEST_SOURCE_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 if(NOT DEFINED CTEST_BINARY_DIRECTORY)
   set(CTEST_BINARY_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/build)
-endif()
-
-# CTEST_CMAKE_GENERATOR must be defined in any case here.
-if(NOT DEFINED CTEST_CMAKE_GENERATOR)
-  find_program(_gen NAMES ninja ninja-build samu)
-  if(_gen)
-    set(CTEST_CMAKE_GENERATOR "Ninja")
-  elseif(WIN32)
-    set(CTEST_CMAKE_GENERATOR "MinGW Makefiles")
-    set(CTEST_BUILD_FLAGS -j)  # not --parallel as this goes to generator directly
-  else()
-    set(CTEST_CMAKE_GENERATOR "Unix Makefiles")
-    set(CTEST_BUILD_FLAGS -j)  # not --parallel as this goes to generator directly
-  endif()
 endif()
 
 # -- build and test
