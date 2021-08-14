@@ -128,20 +128,20 @@ def igrf(
             Bnorth[i], Beast[i], Bvert[i], Btotal[i] = list(map(float, ret.stdout.split()))
 
     # %% assemble output
+    decl, incl = mag_vector2incl_decl(Bnorth, Beast, Bvert)
+
     mag = xarray.Dataset(
         {
             "north": ("alt_km", Bnorth),
             "east": ("alt_km", Beast),
             "down": ("alt_km", Bvert),
             "total": ("alt_km", Btotal),
+            "incl": ("alt_km", incl),
+            "decl": ("alt_km", decl),
         },
         coords={"alt_km": alt_km},
         attrs={"time": time, "isv": isv, "itype": itype, "glat": glat, "glon": glon},
     )
 
-    decl, incl = mag_vector2incl_decl(mag.north, mag.east, mag.down)
-
-    mag["incl"] = ("alt_km", incl)
-    mag["decl"] = ("alt_km", decl)
 
     return mag
