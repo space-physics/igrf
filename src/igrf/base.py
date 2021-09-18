@@ -83,8 +83,8 @@ def grid(
 
     decl, incl = mag_vector2incl_decl(mag.north, mag.east, mag.down)
 
-    mag["incl"] = (("glat", "glon"), incl)
-    mag["decl"] = (("glat", "glon"), decl)
+    mag["incl"] = (("glat", "glon"), incl.data)
+    mag["decl"] = (("glat", "glon"), decl.data)
 
     return mag
 
@@ -141,7 +141,7 @@ def igrf(
 
     decl, incl = mag_vector2incl_decl(mag.north, mag.east, mag.down)
 
-    mag["incl"] = ("alt_km", incl)
-    mag["decl"] = ("alt_km", decl)
+    mag["incl"] = ("alt_km", incl.data)
+    mag["decl"] = ("alt_km", decl.data)
 
     return mag
