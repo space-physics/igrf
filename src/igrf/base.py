@@ -4,34 +4,33 @@ import numpy as np
 import subprocess
 import shutil
 import os
-from pathlib import Path
 import importlib.resources
 
 from .utils import mag_vector2incl_decl, datetime2yeardec
 
+NAME = "igrf13_driver"
+if os.name == "nt":
+    NAME += ".exe"
 
-def cmake(setup_file: Path):
+
+def build():
     """
     attempt to build using CMake
     """
-    exe = shutil.which("ctest")
-    if not exe:
+    cmake = shutil.which("cmake")
+    if not cmake:
         raise FileNotFoundError("CMake not available")
 
-    subprocess.check_call([exe, "-S", str(setup_file), "-VV"])
+    with importlib.resources.path(__package__, "CMakeLists.txt") as f:
+        s = f.parent
+        b = s / "build"
+        g = []
 
+        if os.name == "nt" and not os.environ.get("CMAKE_GENERATOR"):
+            g = ["-G", "MinGW Makefiles"]
 
-def build_exe(exe_name: str) -> str:
-    # build on run
-    if os.name == "nt":
-        exe_name += ".exe"
-    if not importlib.resources.is_resource(__package__, exe_name):
-        with importlib.resources.path(__package__, "setup.cmake") as setup_file:
-            cmake(setup_file)
-    if not importlib.resources.is_resource(__package__, exe_name):
-        raise ModuleNotFoundError("could not build MSISE00 Fortran driver")
-
-    return exe_name
+        subprocess.check_call([cmake, f"-S{s}", f"-B{b}"] + g)
+        subprocess.check_call([cmake, "--build", str(b), "--parallel"])
 
 
 def grid(
@@ -54,12 +53,16 @@ def grid(
     z = np.empty_like(x)
     f = np.empty_like(x)
 
-    with importlib.resources.path(__package__, build_exe("igrf13_driver")) as exe:
+    try:
+        with importlib.resources.path(__package__, NAME) as exe:
+            pass
+    except FileNotFoundError:
+        build()
+
+    with importlib.resources.path(__package__, NAME) as exe:
         for i, (la, lo) in enumerate(zip(glat.ravel(), glon.ravel())):
             cmd = [str(exe), str(yeardec), str(la), str(lo), str(alt_km), str(isv), str(itype)]
-            ret = subprocess.run(
-                cmd, universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-            )
+            ret = subprocess.run(cmd, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             if ret.returncode != 0:
                 raise RuntimeError(
                     f"IGRF13 error code {ret.returncode}\n{ret.stderr}\n{' '.join(cmd)}"
@@ -119,12 +122,16 @@ def igrf(
     Bvert = np.empty_like(Bnorth)
     Btotal = np.empty_like(Bnorth)
 
-    with importlib.resources.path(__package__, build_exe("igrf13_driver")) as exe:
+    try:
+        with importlib.resources.path(__package__, NAME) as exe:
+            pass
+    except FileNotFoundError:
+        build()
+
+    with importlib.resources.path(__package__, NAME) as exe:
         for i, a in enumerate(alt_km):
             cmd = [str(exe), str(yeardec), str(glat), str(glon), str(a), str(isv), str(itype)]
-            ret = subprocess.run(
-                cmd, universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-            )
+            ret = subprocess.run(cmd, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             if ret.returncode != 0:
                 raise RuntimeError(
                     f"IGRF13 error code {ret.returncode}\n{ret.stderr}\n{' '.join(cmd)}"
