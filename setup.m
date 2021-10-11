@@ -1,3 +1,5 @@
+% this puts Python DLLs on Matlab shell path.
+
 cwd = fileparts(mfilename('fullpath'));
 addpath(cwd)
 
