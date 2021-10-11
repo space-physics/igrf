@@ -1,8 +1,7 @@
-cmake_minimum_required(VERSION 3.12)
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Release CACHE STRING "Debug or Release")
-endif()
+cmake_minimum_required(VERSION 3.14...3.21)
+
 project(igrf LANGUAGES Fortran)
+
 enable_testing()
 
 add_executable(igrf13_driver fortran/igrf13_driver.f90 fortran/igrf13.f)

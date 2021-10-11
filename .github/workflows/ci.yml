@@ -1,5 +1,8 @@
 name: ci
 
+env:
+  CMAKE_BUILD_TYPE: Release
+
 on:
   push:
     paths:
@@ -37,8 +40,8 @@ jobs:
 
     - run: pytest
       env:
-        FC: gfortran-10
-        CC: gcc-10
+        FC: gfortran-11
+        CC: gcc-11
 
   windows:
     needs: linux

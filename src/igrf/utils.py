@@ -1,11 +1,11 @@
-import typing
+from __future__ import annotations
 import datetime
 from dateutil.parser import parse
 import numpy as np
 
 
 # %% utility functions
-def mag_vector2incl_decl(x: float, y: float, z: float) -> typing.Tuple[float, float]:
+def mag_vector2incl_decl(x: float, y: float, z: float) -> tuple[float, float]:
     """
     Inputs:
     -------
@@ -29,7 +29,7 @@ def mag_vector2incl_decl(x: float, y: float, z: float) -> typing.Tuple[float, fl
     return decl, incl
 
 
-def latlon2colat(glat: float, glon: float) -> typing.Tuple[np.ndarray, np.ndarray]:
+def latlon2colat(glat: float, glon: float) -> tuple[np.ndarray, np.ndarray]:
     # atleast_1d for iteration later
     colat = 90 - np.atleast_1d(glat)
     elon = (360 + np.atleast_1d(glon)) % 360
@@ -37,7 +37,7 @@ def latlon2colat(glat: float, glon: float) -> typing.Tuple[np.ndarray, np.ndarra
     return colat, elon
 
 
-def latlonworldgrid(latstep: int = 5, lonstep: int = 5) -> typing.Tuple[np.ndarray, np.ndarray]:
+def latlonworldgrid(latstep: int = 5, lonstep: int = 5) -> tuple[np.ndarray, np.ndarray]:
     lat = np.arange(-90.0, 90 + latstep, latstep)
     lon = np.arange(-180.0, 180 + lonstep, lonstep)
     glon, glat = np.meshgrid(lon, lat)
@@ -45,7 +45,7 @@ def latlonworldgrid(latstep: int = 5, lonstep: int = 5) -> typing.Tuple[np.ndarr
     return glat, glon
 
 
-def datetime2yeardec(time: typing.Union[str, datetime.datetime, datetime.date]) -> float:
+def datetime2yeardec(time: str | datetime.datetime | datetime.date) -> float:
     """
     Convert a datetime into a float. The integer part of the float should
     represent the year.

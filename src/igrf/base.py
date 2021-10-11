@@ -90,7 +90,13 @@ def grid(
 
 
 def igrf(
-    time: datetime, glat: float, glon: float, alt_km: np.ndarray, *, isv: int = 0, itype: int = 1,
+    time: datetime,
+    glat: float,
+    glon: float,
+    alt_km: np.ndarray,
+    *,
+    isv: int = 0,
+    itype: int = 1,
 ) -> xarray.Dataset:
     """
 
@@ -139,7 +145,7 @@ def igrf(
         attrs={"time": time, "isv": isv, "itype": itype, "glat": glat, "glon": glon},
     )
 
-    decl, incl = mag_vector2incl_decl(mag.north, mag.east, mag.down)
+    decl, incl = mag_vector2incl_decl(mag.north.data, mag.east.data, mag.down.data)
 
     mag["incl"] = ("alt_km", incl)
     mag["decl"] = ("alt_km", decl)
